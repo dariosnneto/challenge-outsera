@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install *)",
+      "Bash(npx tsc *)",
+      "Bash(npx playwright *)",
+      "Bash(npm run *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" \"https://reqres.in/api/users/2\")",
+      "Bash(curl -s \"https://reqres.in/api/users/2\")",
+      "Bash(curl -s \"https://reqres.in/api/login\" -X POST -H \"Content-Type: application/json\" -H \"x-api-key: reqres-free-v1\" -d '{\"email\":\"eve.holt@reqres.in\",\"password\":\"cityslicka\"}')",
+      "Bash(curl -s \"https://reqres.in/api/login\" -X POST -H \"Content-Type: application/json\" -H \"x-api-key: reqres-free-v1\" -d '{\"email\":\"eve.holt@reqres.in\"}')",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" https://reqres.in/api/users)",
+      "Bash(REQRES_API_KEY=pub_b74dd27968a5437a9fedec569b74d6114d6ce202c27cf38e2bc20f674681de7c npx playwright test --project=api)",
+      "Bash(REQRES_API_KEY=pub_b74dd27968a5437a9fedec569b74d6114d6ce202c27cf38e2bc20f674681de7c npx playwright test --project=api-bdd)",
+      "Bash(REQRES_API_KEY=pub_b74dd27968a5437a9fedec569b74d6114d6ce202c27cf38e2bc20f674681de7c npx playwright test --project=api-bdd --grep \"CT04-0002\")",
+      "Bash(node -e ' *)",
+      "Bash(xargs grep *)"
+    ],
+    "additionalDirectories": [
+      "C:\\challenge-outsera\\api",
+      "C:\\challenge-outsera"
+    ]
+  }
+}

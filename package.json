@@ -1,0 +1,25 @@
+{
+  "name": "qa-automation-challenge",
+  "version": "1.0.0",
+  "description": "QA Automation Challenge - Outsera Assessment. Playwright + TypeScript + Cucumber BDD.",
+  "scripts": {
+    "test:api": "playwright test --project=api",
+    "test:e2e": "playwright test --project=e2e",
+    "test:e2e:cucumber": "cucumber-js",
+    "test:all": "npm run test:api && npm run test:e2e",
+    "report": "playwright show-report reports/html"
+  },
+  "devDependencies": {
+    "@cucumber/cucumber": "^10.8.0",
+    "@playwright/test": "^1.44.0",
+    "@types/node": "^20.12.0",
+    "allure-playwright": "^3.0.0",
+    "dotenv": "^17.4.2",
+    "playwright-bdd": "^7.4.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
