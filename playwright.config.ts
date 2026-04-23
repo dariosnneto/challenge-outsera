@@ -11,7 +11,7 @@ const e2eProject = defineBddProject({
 });
 
 const apiBddProject = defineBddProject({
-  name: 'api-bdd',
+  name: 'api',
   features: 'api/features/**/*.feature',
   steps: ['api/steps/**/*.ts'],
 });

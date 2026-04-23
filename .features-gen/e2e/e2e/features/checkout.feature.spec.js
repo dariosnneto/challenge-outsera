@@ -7,7 +7,7 @@ test.describe("Checkout", () => {
     await Given("que estou logado como \"standard_user\"", null, { page });
   });
 
-  test("Checkout completo com um produto exibe confirmação", { tag: ["@CT006-CHECKOUT-COMPLETO-COM-UM-PRODUTO"] }, async ({ When, page, And, Then }) => {
+  test("Checkout completo com um produto exibe confirmação", { tag: ["@CT-E006-CHECKOUT-COMPLETO-COM-UM-PRODUTO"] }, async ({ When, page, And, Then }) => {
     await When("adiciono \"Sauce Labs Backpack\" ao carrinho", null, { page });
     await And("vou ao carrinho", null, { page });
     await And("prossigo para o checkout", null, { page });
@@ -17,7 +17,7 @@ test.describe("Checkout", () => {
     await Then("devo ver a mensagem de confirmação \"Thank you for your order!\"", null, { page });
   });
 
-  test("Checkout completo com múltiplos produtos é concluído com sucesso", { tag: ["@CT007-CHECKOUT-COMPLETO-COM-MULTIPLOS-PRODUTOS"] }, async ({ When, page, And, Then }) => {
+  test("Checkout completo com múltiplos produtos é concluído com sucesso", { tag: ["@CT-E007-CHECKOUT-COMPLETO-COM-MULTIPLOS-PRODUTOS"] }, async ({ When, page, And, Then }) => {
     await When("adiciono \"Sauce Labs Backpack\" ao carrinho", null, { page });
     await And("adiciono \"Sauce Labs Bike Light\" ao carrinho", null, { page });
     await And("vou ao carrinho", null, { page });
@@ -28,7 +28,7 @@ test.describe("Checkout", () => {
     await Then("devo ver a mensagem de confirmação \"Thank you for your order!\"", null, { page });
   });
 
-  test("Checkout sem nome exibe erro", { tag: ["@CT008-CHECKOUT-SEM-NOME"] }, async ({ When, page, And, Then }) => {
+  test("Checkout sem nome exibe erro", { tag: ["@CT-E008-CHECKOUT-SEM-NOME"] }, async ({ When, page, And, Then }) => {
     await When("adiciono \"Sauce Labs Backpack\" ao carrinho", null, { page });
     await And("vou ao carrinho", null, { page });
     await And("prossigo para o checkout", null, { page });
@@ -37,7 +37,7 @@ test.describe("Checkout", () => {
     await Then("devo ver um erro de checkout contendo \"First Name is required\"", null, { page });
   });
 
-  test("Checkout sem sobrenome exibe erro", { tag: ["@CT009-CHECKOUT-SEM-SOBRENOME"] }, async ({ When, page, And, Then }) => {
+  test("Checkout sem sobrenome exibe erro", { tag: ["@CT-E009-CHECKOUT-SEM-SOBRENOME"] }, async ({ When, page, And, Then }) => {
     await When("adiciono \"Sauce Labs Backpack\" ao carrinho", null, { page });
     await And("vou ao carrinho", null, { page });
     await And("prossigo para o checkout", null, { page });
@@ -46,7 +46,7 @@ test.describe("Checkout", () => {
     await Then("devo ver um erro de checkout contendo \"Last Name is required\"", null, { page });
   });
 
-  test("Checkout sem CEP exibe erro", { tag: ["@CT010-CHECKOUT-SEM-CEP"] }, async ({ When, page, And, Then }) => {
+  test("Checkout sem CEP exibe erro", { tag: ["@CT-E010-CHECKOUT-SEM-CEP"] }, async ({ When, page, And, Then }) => {
     await When("adiciono \"Sauce Labs Backpack\" ao carrinho", null, { page });
     await And("vou ao carrinho", null, { page });
     await And("prossigo para o checkout", null, { page });
@@ -55,7 +55,7 @@ test.describe("Checkout", () => {
     await Then("devo ver um erro de checkout contendo \"Postal Code is required\"", null, { page });
   });
 
-  test("Remover produto do carrinho antes do checkout deixa o carrinho vazio", { tag: ["@CT011-REMOVER-PRODUTO-DO-CARRINHO"] }, async ({ When, page, And, Then }) => {
+  test("Remover produto do carrinho antes do checkout deixa o carrinho vazio", { tag: ["@CT-E011-REMOVER-PRODUTO-DO-CARRINHO"] }, async ({ When, page, And, Then }) => {
     await When("adiciono \"Sauce Labs Backpack\" ao carrinho", null, { page });
     await And("vou ao carrinho", null, { page });
     await And("removo \"Sauce Labs Backpack\" do carrinho", null, { page });
@@ -74,10 +74,10 @@ test.use({
 });
 
 const bddFileMeta = {
-  "Checkout completo com um produto exibe confirmação": {"pickleLocation":"8:3","tags":["@CT006-CHECKOUT-COMPLETO-COM-UM-PRODUTO"],"ownTags":["@CT006-CHECKOUT-COMPLETO-COM-UM-PRODUTO"]},
-  "Checkout completo com múltiplos produtos é concluído com sucesso": {"pickleLocation":"18:3","tags":["@CT007-CHECKOUT-COMPLETO-COM-MULTIPLOS-PRODUTOS"],"ownTags":["@CT007-CHECKOUT-COMPLETO-COM-MULTIPLOS-PRODUTOS"]},
-  "Checkout sem nome exibe erro": {"pickleLocation":"29:3","tags":["@CT008-CHECKOUT-SEM-NOME"],"ownTags":["@CT008-CHECKOUT-SEM-NOME"]},
-  "Checkout sem sobrenome exibe erro": {"pickleLocation":"38:3","tags":["@CT009-CHECKOUT-SEM-SOBRENOME"],"ownTags":["@CT009-CHECKOUT-SEM-SOBRENOME"]},
-  "Checkout sem CEP exibe erro": {"pickleLocation":"47:3","tags":["@CT010-CHECKOUT-SEM-CEP"],"ownTags":["@CT010-CHECKOUT-SEM-CEP"]},
-  "Remover produto do carrinho antes do checkout deixa o carrinho vazio": {"pickleLocation":"56:3","tags":["@CT011-REMOVER-PRODUTO-DO-CARRINHO"],"ownTags":["@CT011-REMOVER-PRODUTO-DO-CARRINHO"]},
+  "Checkout completo com um produto exibe confirmação": {"pickleLocation":"8:3","tags":["@CT-E006-CHECKOUT-COMPLETO-COM-UM-PRODUTO"],"ownTags":["@CT-E006-CHECKOUT-COMPLETO-COM-UM-PRODUTO"]},
+  "Checkout completo com múltiplos produtos é concluído com sucesso": {"pickleLocation":"18:3","tags":["@CT-E007-CHECKOUT-COMPLETO-COM-MULTIPLOS-PRODUTOS"],"ownTags":["@CT-E007-CHECKOUT-COMPLETO-COM-MULTIPLOS-PRODUTOS"]},
+  "Checkout sem nome exibe erro": {"pickleLocation":"29:3","tags":["@CT-E008-CHECKOUT-SEM-NOME"],"ownTags":["@CT-E008-CHECKOUT-SEM-NOME"]},
+  "Checkout sem sobrenome exibe erro": {"pickleLocation":"38:3","tags":["@CT-E009-CHECKOUT-SEM-SOBRENOME"],"ownTags":["@CT-E009-CHECKOUT-SEM-SOBRENOME"]},
+  "Checkout sem CEP exibe erro": {"pickleLocation":"47:3","tags":["@CT-E010-CHECKOUT-SEM-CEP"],"ownTags":["@CT-E010-CHECKOUT-SEM-CEP"]},
+  "Remover produto do carrinho antes do checkout deixa o carrinho vazio": {"pickleLocation":"56:3","tags":["@CT-E011-REMOVER-PRODUTO-DO-CARRINHO"],"ownTags":["@CT-E011-REMOVER-PRODUTO-DO-CARRINHO"]},
 };

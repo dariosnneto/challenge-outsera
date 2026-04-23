@@ -8,18 +8,38 @@ Framework de automação de testes cobrindo **API REST** (reqres.in) e **E2E web
 
 ```text
 challenge-outsera/
-├── api/
-│   ├── features/        # Cenários BDD — GET/POST/PUT/DELETE /api/users
-│   ├── helpers/         # ApiClient — wrapper tipado sobre APIRequestContext
-│   ├── steps/           # Step definitions de API
-│   └── tests/           # Specs Playwright puras (sem BDD)
-├── e2e/
-│   ├── features/        # Cenários BDD — login e checkout
-│   ├── pages/           # Page Object Model (Login, Dashboard, Cart, Checkout)
-│   ├── steps/           # Step definitions E2E
-│   └── support/         # World — contexto compartilhado entre steps
-├── .github/workflows/   # Pipeline CI/CD (GitHub Actions)
-├── playwright.config.ts # 3 projetos: api | api-bdd | e2e
+├── api/                                   # Projeto: api (Playwright API + BDD)
+│   ├── features/
+│   │   ├── users.get.feature              # CT-A001–CT-A005  (5 cenários)
+│   │   ├── users.post.feature             # CT-A006–CT-A012  (7 cenários)
+│   │   ├── users.put.feature              # CT-A013–CT-A016  (4 cenários)
+│   │   └── users.delete.feature           # CT-A017–CT-A019  (3 cenários)
+│   ├── helpers/
+│   │   ├── api.client.ts                  # ApiClient — wrapper tipado: get, post, put, patch, delete
+│   │   │                                  # Interface: ApiResponse<T> (status, headers, body, raw)
+│   │   └── constants.ts                   # BASE_URL, REQRES_LOGIN, REQRES_REGISTER
+│   └── steps/
+│       └── users.api.steps.ts             # Step definitions — Given/Then por cenário CT012–CT030
+│
+├── e2e/                                   # Projeto: e2e (Playwright Browser + BDD)
+│   ├── features/
+│   │   ├── login.feature                  # CT-E001–CT-E005  (5 cenários)
+│   │   └── checkout.feature               # CT-E006–CT-E011  (6 cenários)
+│   ├── pages/
+│   │   ├── LoginPage.ts                   # navigate(), login(), getErrorMessage()
+│   │   ├── DashboardPage.ts               # getTitle(), addProductToCart(), goToCart()
+│   │   ├── CartPage.ts                    # proceedToCheckout(), removeItem(), getCartItems()
+│   │   └── CheckoutPage.ts                # fillForm(), continue(), finish(), getConfirmationMessage(), getErrorMessage()
+│   ├── steps/
+│   │   ├── login.steps.ts                 # Step definitions — CT001–CT005
+│   │   └── checkout.steps.ts              # Step definitions — CT006–CT011
+│   └── bdd.setup.ts                       # Global setup — executa bddgen antes dos testes
+│
+├── docs/                                  # Documentação técnica
+├── .github/
+│   └── workflows/
+│       └── ci.yml                         # Pipeline: job api-tests → job e2e-tests
+├── playwright.config.ts                   # 2 projetos BDD: api | e2e
 ├── tsconfig.json
 └── package.json
 ```
@@ -67,9 +87,8 @@ npx playwright test --workers=1
 ### Por camada
 
 ```bash
-npm run test:api   # specs de API (Playwright puro)
-npx playwright test --project=api-bdd   # API + BDD
-npm run test:e2e   # E2E + BDD
+npm run test:api                        # API + BDD
+npm run test:e2e                        # E2E + BDD
 ```
 
 ### Por tag de cenário

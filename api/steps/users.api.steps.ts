@@ -30,7 +30,7 @@ function getField(body: unknown, field: string): unknown {
   return field.split('.').reduce((obj, key) => (obj as Record<string, unknown>)?.[key], body);
 }
 
-// ─── CT012 — Listar usuários paginados ───────────────────────────────────────
+// ─── CT-A001 — Listar usuários paginados ─────────────────────────────────────
 
 Given(
   'que faço um GET em {string} com parâmetro {string} igual a {string}',
@@ -43,9 +43,9 @@ Given(
   }
 );
 
-// ─── CT013 — Buscar usuário por ID ───────────────────────────────────────────
-// ─── CT015 — Buscar usuário inexistente ──────────────────────────────────────
-// ─── CT016 — Buscar recurso desconhecido ─────────────────────────────────────
+// ─── CT-A002 — Buscar usuário por ID ─────────────────────────────────────────
+// ─── CT-A004 — Buscar usuário inexistente ────────────────────────────────────
+// ─── CT-A005 — Buscar recurso desconhecido ───────────────────────────────────
 
 Given('que faço um GET em {string}', async ({ request }, path: string) => {
   const client = new ApiClient(request, BASE_URL);
@@ -55,7 +55,7 @@ Given('que faço um GET em {string}', async ({ request }, path: string) => {
   s.responses = [res];
 });
 
-// ─── CT014 — Validar paginação com dados distintos ───────────────────────────
+// ─── CT-A003 — Validar paginação com dados distintos ─────────────────────────
 
 Then('as páginas não devem compartilhar IDs de usuários', ({ request }) => {
   const { responses } = getState(request);
@@ -65,12 +65,12 @@ Then('as páginas não devem compartilhar IDs de usuários', ({ request }) => {
   expect(ids1.filter((id) => ids2.includes(id))).toHaveLength(0);
 });
 
-// ─── CT017 — Criar novo usuário ───────────────────────────────────────────────
-// ─── CT018 — Login com credenciais válidas ────────────────────────────────────
-// ─── CT019 — Registrar novo usuário ──────────────────────────────────────────
-// ─── CT021 — Login sem senha ──────────────────────────────────────────────────
-// ─── CT022 — Registrar com e-mail não cadastrado ─────────────────────────────
-// ─── CT023 — Login com senha incorreta ───────────────────────────────────────
+// ─── CT-A006 — Criar novo usuário ────────────────────────────────────────────
+// ─── CT-A007 — Login com credenciais válidas ─────────────────────────────────
+// ─── CT-A008 — Registrar novo usuário ────────────────────────────────────────
+// ─── CT-A010 — Login sem senha ───────────────────────────────────────────────
+// ─── CT-A011 — Registrar com e-mail não cadastrado ───────────────────────────
+// ─── CT-A012 — Login com senha incorreta ─────────────────────────────────────
 
 Given(
   'que faço um POST em {string} com os dados:',
@@ -83,7 +83,7 @@ Given(
   }
 );
 
-// ─── CT020 — Criar usuário com corpo vazio ────────────────────────────────────
+// ─── CT-A009 — Criar usuário com corpo vazio ─────────────────────────────────
 
 Given('que faço um POST em {string} com corpo vazio', async ({ request }, path: string) => {
   const client = new ApiClient(request, BASE_URL);
@@ -93,8 +93,8 @@ Given('que faço um POST em {string} com corpo vazio', async ({ request }, path:
   s.responses = [res];
 });
 
-// ─── CT024 — Atualizar usuário por completo ───────────────────────────────────
-// ─── CT026 — Atualizar usuário inexistente ────────────────────────────────────
+// ─── CT-A013 — Atualizar usuário por completo ────────────────────────────────
+// ─── CT-A015 — Atualizar usuário inexistente ─────────────────────────────────
 
 Given(
   'que faço um PUT em {string} com os dados:',
@@ -107,7 +107,7 @@ Given(
   }
 );
 
-// ─── CT027 — Atualizar usuário com corpo em formato inválido ──────────────────
+// ─── CT-A016 — Atualizar usuário com corpo em formato inválido ───────────────
 
 Given(
   'que faço um PUT em {string} com corpo texto {string}',
@@ -123,7 +123,7 @@ Given(
   }
 );
 
-// ─── CT025 — Atualizar parcialmente um usuário ────────────────────────────────
+// ─── CT-A014 — Atualizar parcialmente um usuário ─────────────────────────────
 
 Given(
   'que faço um PATCH em {string} com os dados:',
@@ -136,9 +136,9 @@ Given(
   }
 );
 
-// ─── CT028 — Deletar usuário ──────────────────────────────────────────────────
-// ─── CT029 — Deletar usuário inexistente ─────────────────────────────────────
-// ─── CT030 — Validar ausência de Content-Type ao deletar ─────────────────────
+// ─── CT-A017 — Deletar usuário ───────────────────────────────────────────────
+// ─── CT-A018 — Deletar usuário inexistente ───────────────────────────────────
+// ─── CT-A019 — Validar ausência de Content-Type ao deletar ───────────────────
 
 Given('que faço um DELETE em {string}', async ({ request }, path: string) => {
   const client = new ApiClient(request, BASE_URL);
@@ -148,7 +148,7 @@ Given('que faço um DELETE em {string}', async ({ request }, path: string) => {
   s.responses = [res];
 });
 
-// ─── Assertions compartilhadas (CT012–CT030) ──────────────────────────────────
+// ─── Assertions compartilhadas (CT-A001–CT-A019) ─────────────────────────────
 
 Then('o status da resposta deve ser {int}', ({ request }, status: number) => {
   expect(getResponse(request).status).toBe(status);

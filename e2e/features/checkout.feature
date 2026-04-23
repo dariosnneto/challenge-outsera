@@ -4,7 +4,7 @@ Funcionalidade: Checkout
   Contexto:
     Dado que estou logado como "standard_user"
 
-  @CT006-CHECKOUT-COMPLETO-COM-UM-PRODUTO
+  @CT-E006-CHECKOUT-COMPLETO-COM-UM-PRODUTO
   Cenário: Checkout completo com um produto exibe confirmação
     Quando adiciono "Sauce Labs Backpack" ao carrinho
     E vou ao carrinho
@@ -14,7 +14,7 @@ Funcionalidade: Checkout
     E finalizo o pedido
     Então devo ver a mensagem de confirmação "Thank you for your order!"
 
-  @CT007-CHECKOUT-COMPLETO-COM-MULTIPLOS-PRODUTOS
+  @CT-E007-CHECKOUT-COMPLETO-COM-MULTIPLOS-PRODUTOS
   Cenário: Checkout completo com múltiplos produtos é concluído com sucesso
     Quando adiciono "Sauce Labs Backpack" ao carrinho
     E adiciono "Sauce Labs Bike Light" ao carrinho
@@ -25,7 +25,7 @@ Funcionalidade: Checkout
     E finalizo o pedido
     Então devo ver a mensagem de confirmação "Thank you for your order!"
 
-  @CT008-CHECKOUT-SEM-NOME
+  @CT-E008-CHECKOUT-SEM-NOME
   Cenário: Checkout sem nome exibe erro
     Quando adiciono "Sauce Labs Backpack" ao carrinho
     E vou ao carrinho
@@ -34,7 +34,7 @@ Funcionalidade: Checkout
     E continuo para o resumo do pedido
     Então devo ver um erro de checkout contendo "First Name is required"
 
-  @CT009-CHECKOUT-SEM-SOBRENOME
+  @CT-E009-CHECKOUT-SEM-SOBRENOME
   Cenário: Checkout sem sobrenome exibe erro
     Quando adiciono "Sauce Labs Backpack" ao carrinho
     E vou ao carrinho
@@ -43,7 +43,7 @@ Funcionalidade: Checkout
     E continuo para o resumo do pedido
     Então devo ver um erro de checkout contendo "Last Name is required"
 
-  @CT010-CHECKOUT-SEM-CEP
+  @CT-E010-CHECKOUT-SEM-CEP
   Cenário: Checkout sem CEP exibe erro
     Quando adiciono "Sauce Labs Backpack" ao carrinho
     E vou ao carrinho
@@ -52,7 +52,7 @@ Funcionalidade: Checkout
     E continuo para o resumo do pedido
     Então devo ver um erro de checkout contendo "Postal Code is required"
 
-  @CT011-REMOVER-PRODUTO-DO-CARRINHO
+  @CT-E011-REMOVER-PRODUTO-DO-CARRINHO
   Cenário: Remover produto do carrinho antes do checkout deixa o carrinho vazio
     Quando adiciono "Sauce Labs Backpack" ao carrinho
     E vou ao carrinho
