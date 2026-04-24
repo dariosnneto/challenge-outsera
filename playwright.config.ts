@@ -8,12 +8,14 @@ const e2eProject = defineBddProject({
   name: 'e2e',
   features: 'e2e/features/**/*.feature',
   steps: ['e2e/steps/**/*.ts'],
+  featuresRoot: 'e2e',
 });
 
 const apiBddProject = defineBddProject({
   name: 'api',
   features: 'api/features/**/*.feature',
   steps: ['api/steps/**/*.ts'],
+  featuresRoot: 'api',
 });
 
 export default defineConfig({
@@ -25,6 +27,7 @@ export default defineConfig({
   globalSetup: './e2e/bdd.setup.ts',
   reporter: [
     ['html', { outputFolder: 'reports/html', open: 'never' }],
+    ['playwright-bdd/reporter/cucumber', { $type: 'html', outputFile: 'reports/cucumber-bdd.html' }],
     ['json', { outputFile: 'reports/results.json' }],
     ['list'],
   ],
