@@ -21,7 +21,10 @@
       "Bash(npm root *)",
       "Bash(ls \"$\\(npm root -g\\)/markdownlint-cli2/node_modules/markdownlint/lib/\")",
       "Read(//c/Users/User/**)",
-      "Bash(grep -n \"^\\\\`\\\\`\\\\`\" README.md)"
+      "Bash(grep -n \"^\\\\`\\\\`\\\\`\" README.md)",
+      "Bash(git status *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)"
     ],
     "additionalDirectories": [
       "C:\\challenge-outsera\\api",
