@@ -7,7 +7,6 @@ const isMock = process.argv.includes('--mock');
 const k6Bin = process.platform === 'win32'
   ? 'C:\\Program Files\\k6\\k6.exe'
   : 'k6';
-const outputFile = path.resolve(__dirname, '../reports/k6/summary.json');
 const projectRoot = path.resolve(__dirname, '..');
 
 function waitForWireMock(retries = 15, delayMs = 1000) {
@@ -40,7 +39,6 @@ async function run() {
       execFileSync(k6Bin, [
         'run',
         '--env', 'BASE_URL=http://localhost:8080/api',
-        '--out', `json=${outputFile}`,
         'load-test.ts',
       ], { cwd: __dirname, stdio: 'inherit' });
     } finally {
@@ -56,7 +54,6 @@ async function run() {
     execFileSync(k6Bin, [
       'run',
       '--env', `REQRES_API_KEY=${apiKey}`,
-      '--out', `json=${outputFile}`,
       'load-test.ts',
     ], { cwd: __dirname, stdio: 'inherit' });
   }

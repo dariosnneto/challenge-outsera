@@ -1,9 +1,13 @@
 import { createBdd } from 'playwright-bdd';
-import { expect } from '@playwright/test';
+import { expect, APIRequestContext } from '@playwright/test';
 import { ApiClient, ApiResponse } from '../helpers/api.client';
 import { BASE_URL } from '../helpers/constants';
 
 const { Given, Then } = createBdd();
+
+function makeClient(request: APIRequestContext): ApiClient {
+  return new ApiClient(request, BASE_URL);
+}
 
 const scenarioState = new WeakMap<object, { response: ApiResponse | undefined; responses: ApiResponse[] }>();
 
@@ -30,12 +34,10 @@ function getField(body: unknown, field: string): unknown {
   return field.split('.').reduce((obj, key) => (obj as Record<string, unknown>)?.[key], body);
 }
 
-// ─── CT-A001 — Listar usuários paginados ─────────────────────────────────────
-
 Given(
   'que faço um GET em {string} com parâmetro {string} igual a {string}',
   async ({ request }, path: string, param: string, value: string) => {
-    const client = new ApiClient(request, BASE_URL);
+    const client = makeClient(request);
     const res = await client.get(path, { [param]: value });
     const s = getState(request);
     s.response = res;
@@ -43,19 +45,13 @@ Given(
   }
 );
 
-// ─── CT-A002 — Buscar usuário por ID ─────────────────────────────────────────
-// ─── CT-A004 — Buscar usuário inexistente ────────────────────────────────────
-// ─── CT-A005 — Buscar recurso desconhecido ───────────────────────────────────
-
 Given('que faço um GET em {string}', async ({ request }, path: string) => {
-  const client = new ApiClient(request, BASE_URL);
+  const client = makeClient(request);
   const res = await client.get(path);
   const s = getState(request);
   s.response = res;
   s.responses = [res];
 });
-
-// ─── CT-A003 — Validar paginação com dados distintos ─────────────────────────
 
 Then('as páginas não devem compartilhar IDs de usuários', ({ request }) => {
   const { responses } = getState(request);
@@ -65,17 +61,10 @@ Then('as páginas não devem compartilhar IDs de usuários', ({ request }) => {
   expect(ids1.filter((id) => ids2.includes(id))).toHaveLength(0);
 });
 
-// ─── CT-A006 — Criar novo usuário ────────────────────────────────────────────
-// ─── CT-A007 — Login com credenciais válidas ─────────────────────────────────
-// ─── CT-A008 — Registrar novo usuário ────────────────────────────────────────
-// ─── CT-A010 — Login sem senha ───────────────────────────────────────────────
-// ─── CT-A011 — Registrar com e-mail não cadastrado ───────────────────────────
-// ─── CT-A012 — Login com senha incorreta ─────────────────────────────────────
-
 Given(
   'que faço um POST em {string} com os dados:',
   async ({ request }, path: string, dataTable: BddDataTable) => {
-    const client = new ApiClient(request, BASE_URL);
+    const client = makeClient(request);
     const res = await client.post(path, parseTable(dataTable));
     const s = getState(request);
     s.response = res;
@@ -83,31 +72,24 @@ Given(
   }
 );
 
-// ─── CT-A009 — Criar usuário com corpo vazio ─────────────────────────────────
-
 Given('que faço um POST em {string} com corpo vazio', async ({ request }, path: string) => {
-  const client = new ApiClient(request, BASE_URL);
+  const client = makeClient(request);
   const res = await client.post(path, {});
   const s = getState(request);
   s.response = res;
   s.responses = [res];
 });
 
-// ─── CT-A013 — Atualizar usuário por completo ────────────────────────────────
-// ─── CT-A015 — Atualizar usuário inexistente ─────────────────────────────────
-
 Given(
   'que faço um PUT em {string} com os dados:',
   async ({ request }, path: string, dataTable: BddDataTable) => {
-    const client = new ApiClient(request, BASE_URL);
+    const client = makeClient(request);
     const res = await client.put(path, parseTable(dataTable));
     const s = getState(request);
     s.response = res;
     s.responses = [res];
   }
 );
-
-// ─── CT-A016 — Atualizar usuário com corpo em formato inválido ───────────────
 
 Given(
   'que faço um PUT em {string} com corpo texto {string}',
@@ -123,12 +105,10 @@ Given(
   }
 );
 
-// ─── CT-A014 — Atualizar parcialmente um usuário ─────────────────────────────
-
 Given(
   'que faço um PATCH em {string} com os dados:',
   async ({ request }, path: string, dataTable: BddDataTable) => {
-    const client = new ApiClient(request, BASE_URL);
+    const client = makeClient(request);
     const res = await client.patch(path, parseTable(dataTable));
     const s = getState(request);
     s.response = res;
@@ -136,19 +116,13 @@ Given(
   }
 );
 
-// ─── CT-A017 — Deletar usuário ───────────────────────────────────────────────
-// ─── CT-A018 — Deletar usuário inexistente ───────────────────────────────────
-// ─── CT-A019 — Validar ausência de Content-Type ao deletar ───────────────────
-
 Given('que faço um DELETE em {string}', async ({ request }, path: string) => {
-  const client = new ApiClient(request, BASE_URL);
+  const client = makeClient(request);
   const res = await client.delete(path);
   const s = getState(request);
   s.response = res;
   s.responses = [res];
 });
-
-// ─── Assertions compartilhadas (CT-A001–CT-A019) ─────────────────────────────
 
 Then('o status da resposta deve ser {int}', ({ request }, status: number) => {
   expect(getResponse(request).status).toBe(status);

@@ -3,18 +3,27 @@ import { Options } from 'k6/options';
 import { getUsers, getUserById, createUser } from './helpers/http-client.ts';
 import { checkStatus, checkResponseTime, checkJsonBody } from './helpers/checks.ts';
 
+const isSmoke = __ENV.K6_SCENARIO === 'smoke';
+
+const smokeStages = [
+  { duration: '15s', target: 3 },
+  { duration: '15s', target: 0 },
+];
+
+const loadStages = [
+  { duration: '1m', target: 100 },
+  { duration: '1m', target: 300 },
+  { duration: '1m', target: 500 },
+  { duration: '1m', target: 500 },
+  { duration: '1m', target: 0 },
+];
+
 export const options: Options = {
   scenarios: {
     load_test: {
       executor: 'ramping-vus',
       startVUs: 0,
-      stages: [
-        { duration: '1m', target: 100 },
-        { duration: '1m', target: 300 },
-        { duration: '1m', target: 500 },
-        { duration: '1m', target: 500 },
-        { duration: '1m', target: 0 },
-      ],
+      stages: isSmoke ? smokeStages : loadStages,
     },
   },
   thresholds: {
