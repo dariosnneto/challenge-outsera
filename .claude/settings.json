@@ -14,7 +14,8 @@
       "Bash(REQRES_API_KEY=pub_b74dd27968a5437a9fedec569b74d6114d6ce202c27cf38e2bc20f674681de7c npx playwright test --project=api-bdd)",
       "Bash(REQRES_API_KEY=pub_b74dd27968a5437a9fedec569b74d6114d6ce202c27cf38e2bc20f674681de7c npx playwright test --project=api-bdd --grep \"CT04-0002\")",
       "Bash(node -e ' *)",
-      "Bash(xargs grep *)"
+      "Bash(xargs grep *)",
+      "Bash(git push *)"
     ],
     "additionalDirectories": [
       "C:\\challenge-outsera\\api",

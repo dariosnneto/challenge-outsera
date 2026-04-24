@@ -98,7 +98,7 @@ challenge-outsera/
 ## Instalação
 
 ```bash
-git clone <url-do-repositorio>
+git https://github.com/dariosnneto/challenge-outsera.git
 cd challenge-outsera
 npm install
 npx playwright install chromium
