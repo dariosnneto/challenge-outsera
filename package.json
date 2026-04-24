@@ -11,7 +11,9 @@
     "test:k6": "node k6/run-k6.js",
     "test:k6:report": "npm run test:k6 && node k6/generate-report.js",
     "test:k6:mock": "node k6/run-k6.js --mock",
-    "test:k6:mock:report": "npm run test:k6:mock && node k6/generate-report.js"
+    "test:k6:mock:report": "npm run test:k6:mock && node k6/generate-report.js",
+    "wiremock:up": "docker compose up -d wiremock",
+    "wiremock:down": "docker compose down"
   },
   "devDependencies": {
     "@cucumber/cucumber": "^10.8.0",
