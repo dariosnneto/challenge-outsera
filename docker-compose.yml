@@ -1,0 +1,15 @@
+services:
+  wiremock:
+    image: wiremock/wiremock:latest
+    container_name: k6-wiremock
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./wiremock/mappings:/home/wiremock/mappings
+    command: --port 8080 --verbose
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/__admin/health || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 5s

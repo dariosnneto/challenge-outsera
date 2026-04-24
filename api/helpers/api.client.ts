@@ -7,11 +7,6 @@ export interface ApiResponse<T = unknown> {
   raw: APIResponse;
 }
 
-/**
- * Thin wrapper around Playwright's APIRequestContext.
- * Each method returns a typed ApiResponse so tests can assert on status,
- * headers, and body without repeating the same json() / status() calls.
- */
 export class ApiClient {
   constructor(
     private readonly request: APIRequestContext,

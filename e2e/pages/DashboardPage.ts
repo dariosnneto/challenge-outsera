@@ -18,7 +18,6 @@ export class DashboardPage {
   }
 
   async addProductToCart(productName: string): Promise<void> {
-    // Locate the inventory item that contains the product name, then click its Add to Cart button
     const item = this.productList.filter({ hasText: productName });
     await item.locator('button[data-test^="add-to-cart"]').click();
   }
