@@ -1,11 +1,13 @@
 import http from 'k6/http';
 import { Params, Response } from 'k6/http';
 
-const BASE_URL = 'https://reqres.in/api';
-const API_KEY = __ENV.REQRES_API_KEY;
+const BASE_URL = __ENV.BASE_URL || 'https://reqres.in/api';
+const API_KEY = __ENV.REQRES_API_KEY || '';
 
 function baseHeaders(): Record<string, string> {
-  return { 'Content-Type': 'application/json', 'x-api-key': API_KEY };
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+  if (API_KEY) headers['x-api-key'] = API_KEY;
+  return headers;
 }
 
 export function getUsers(page: number = 1): Response {
