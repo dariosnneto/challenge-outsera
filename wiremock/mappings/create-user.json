@@ -1,0 +1,18 @@
+{
+  "request": {
+    "method": "POST",
+    "urlPath": "/api/users"
+  },
+  "response": {
+    "status": 201,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "id": "999",
+      "name": "Load Test User",
+      "job": "QA Engineer",
+      "createdAt": "2026-04-24T00:00:00.000Z"
+    }
+  }
+}

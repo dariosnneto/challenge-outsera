@@ -1,0 +1,9 @@
+services:
+  wiremock:
+    image: wiremock/wiremock:latest
+    container_name: k6-wiremock
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./wiremock/mappings:/home/wiremock/mappings
+    command: --port 8080 --verbose
