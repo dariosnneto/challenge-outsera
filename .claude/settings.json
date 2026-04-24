@@ -15,7 +15,13 @@
       "Bash(REQRES_API_KEY=pub_b74dd27968a5437a9fedec569b74d6114d6ce202c27cf38e2bc20f674681de7c npx playwright test --project=api-bdd --grep \"CT04-0002\")",
       "Bash(node -e ' *)",
       "Bash(xargs grep *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "Bash(grep -E \"\\(package\\\\.json|playwright|tsconfig|\\\\.feature$\\)\")",
+      "Bash(npx markdownlint-cli2 *)",
+      "Bash(npm root *)",
+      "Bash(ls \"$\\(npm root -g\\)/markdownlint-cli2/node_modules/markdownlint/lib/\")",
+      "Read(//c/Users/User/**)",
+      "Bash(grep -n \"^\\\\`\\\\`\\\\`\" README.md)"
     ],
     "additionalDirectories": [
       "C:\\challenge-outsera\\api",

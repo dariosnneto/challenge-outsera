@@ -1,4 +1,4 @@
-# QA Automation Challenge — Outsera
+# 🧪 QA Automation Challenge — Outsera
 
 Framework de automação de testes cobrindo **API REST** (reqres.in), **E2E web** (saucedemo.com) e **testes de carga** (K6) com BDD em Gherkin (Português), usando Playwright + TypeScript + K6.
 
@@ -6,19 +6,20 @@ Framework de automação de testes cobrindo **API REST** (reqres.in), **E2E web*
 
 ## Índice
 
-1. [Stack](#stack)
-2. [Estrutura de Pastas](#estrutura-de-pastas)
-3. [Instalação](#instalação)
-4. [Variáveis de Ambiente](#variáveis-de-ambiente)
-5. [Testes de API](#testes-de-api)
-6. [Testes E2E](#testes-e2e)
-7. [Testes de Carga K6](#testes-de-carga-k6)
-8. [Relatórios](#relatórios)
-9. [CI — GitHub Actions](#ci--github-actions)
+1. 🛠️ [Stack](#stack)
+2. 📁 [Estrutura de Pastas](#estrutura-de-pastas)
+3. ⚙️ [Instalação](#instalação)
+4. 🔑 [Variáveis de Ambiente](#variáveis-de-ambiente)
+5. 🔌 [Testes de API](#testes-de-api)
+6. 🌐 [Testes E2E](#testes-e2e)
+7. 🚀 [Testes de Carga K6](#testes-de-carga-k6)
+8. 📈 [Relatórios](#relatórios)
+9. 🤖 [CI — GitHub Actions](#ci--github-actions)
+10. 📜 [Scripts disponíveis](#scripts-disponíveis)
 
 ---
 
-## Stack
+## Stack 🛠️
 
 | Ferramenta         | Versão   | Função                                   |
 | ------------------ | -------- | ---------------------------------------- |
@@ -34,7 +35,7 @@ Framework de automação de testes cobrindo **API REST** (reqres.in), **E2E web*
 
 ---
 
-## Estrutura de Pastas
+## Estrutura de Pastas 📁
 
 ```text
 challenge-outsera/
@@ -79,10 +80,6 @@ challenge-outsera/
 │       ├── get-user-by-id.json      # Stub GET /api/users/:id
 │       └── create-user.json         # Stub POST /api/users
 │
-├── docs/
-│   ├── k6-analysis.md               # Análise dos resultados de carga (dry-run + 500 VUs)
-│   └── code-review-report.md        # Relatório de revisão de código (AGENTS-example.md)
-│
 ├── .github/
 │   └── workflows/
 │       └── ci.yml                   # Pipeline: 3 jobs em paralelo + schedule semanal K6
@@ -95,10 +92,10 @@ challenge-outsera/
 
 ---
 
-## Instalação
+## Instalação ⚙️
 
 ```bash
-git https://github.com/dariosnneto/challenge-outsera.git
+git clone https://github.com/dariosnneto/challenge-outsera.git
 cd challenge-outsera
 npm install
 npx playwright install chromium
@@ -123,7 +120,7 @@ O `run-k6.js` espera o binário em `C:\Program Files\k6\k6.exe` no Windows e `k6
 
 ---
 
-## Variáveis de Ambiente
+## Variáveis de Ambiente 🔑
 
 Crie o arquivo `.env` na raiz do projeto:
 
@@ -146,7 +143,7 @@ SAUCE_PASSWORD=secret_sauce
 
 ---
 
-## Testes de API
+## Testes de API 🔌
 
 19 cenários BDD cobrindo GET, POST, PUT, PATCH e DELETE na API reqres.in.
 
@@ -163,7 +160,7 @@ npx playwright test --project=api --grep "@CT-A006|@CT-A007"
 
 ---
 
-## Testes E2E
+## Testes E2E 🌐
 
 11 cenários BDD cobrindo login e fluxo de checkout no saucedemo.com.
 
@@ -177,7 +174,7 @@ npx playwright test --project=e2e --grep "@CT-E006-CHECKOUT-COMPLETO-COM-UM-PROD
 
 ---
 
-## Testes de Carga K6
+## Testes de Carga K6 🚀
 
 ### Cenários disponíveis
 
@@ -302,7 +299,7 @@ npm run wiremock:down
 
 ---
 
-### Relatório HTML do K6
+### Relatório HTML do K6 📊
 
 O relatório é gerado a partir do JSON produzido pelo `handleSummary()` em `load-test.ts`. Ele é gravado automaticamente em `reports/k6/summary-handleSummary.json` ao final de cada execução.
 
@@ -318,7 +315,7 @@ O relatório HTML fica em `reports/k6/index.html`.
 
 ---
 
-### Troubleshooting K6
+### Troubleshooting K6 🔧
 
 | Problema | Causa | Solução |
 | -------- | ----- | ------- |
@@ -330,7 +327,7 @@ O relatório HTML fica em `reports/k6/index.html`.
 
 ---
 
-## Relatórios
+## Relatórios 📈
 
 | Relatório | Caminho | Como gerar |
 | --------- | ------- | ---------- |
@@ -347,7 +344,7 @@ npm run report
 
 ---
 
-## CI — GitHub Actions
+## CI — GitHub Actions 🤖
 
 O pipeline executa **3 jobs em paralelo** a cada push ou PR para `main` e `develop`.
 
@@ -385,7 +382,7 @@ Artifacts de cada execução ficam disponíveis por **30 dias** na aba **Actions
 
 ---
 
-## Scripts disponíveis
+## Scripts disponíveis 📜
 
 ```bash
 npm run test:api              # Testes de API (Playwright BDD)
