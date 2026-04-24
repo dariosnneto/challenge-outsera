@@ -7,7 +7,9 @@
     "test:e2e": "playwright test --project=e2e",
     "test:e2e:cucumber": "cucumber-js",
     "test:all": "npm run test:api && npm run test:e2e",
-    "report": "playwright show-report reports/html"
+    "report": "playwright show-report reports/html",
+    "test:k6": "k6 run --out json=reports/k6/summary.json k6/load-test.ts",
+    "test:k6:report": "npm run test:k6 && node k6/generate-report.js"
   },
   "devDependencies": {
     "@cucumber/cucumber": "^10.8.0",
@@ -15,6 +17,7 @@
     "@types/node": "^20.12.0",
     "allure-playwright": "^3.0.0",
     "dotenv": "^17.4.2",
+    "k6-html-reporter": "^1.0.5",
     "playwright-bdd": "^7.4.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
