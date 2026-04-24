@@ -16,9 +16,10 @@ function waitForWireMock(retries = 15, delayMs = 1000) {
     let attempts = 0;
     const check = () => {
       http.get('http://localhost:8080/__admin/health', (res) => {
+        res.resume(); // drain response body to free the socket
         if (res.statusCode === 200) return resolve();
         retry();
-      }).on('error', retry);
+      }).on('error', () => retry());
     };
     const retry = () => {
       attempts++;
@@ -44,7 +45,11 @@ async function run() {
       ], { cwd: __dirname, stdio: 'inherit' });
     } finally {
       console.log('[mock] Stopping WireMock...');
-      execSync('docker compose down', { cwd: projectRoot, stdio: 'inherit' });
+      try {
+        execSync('docker compose down', { cwd: projectRoot, stdio: 'inherit' });
+      } catch (cleanupErr) {
+        console.error('[mock] Warning: failed to stop WireMock:', cleanupErr.message);
+      }
     }
   } else {
     const apiKey = process.env.REQRES_API_KEY || '';
@@ -59,5 +64,5 @@ async function run() {
 
 run().catch((err) => {
   console.error(err.message);
-  process.exit(1);
+  process.exit(typeof err.status === 'number' ? err.status : 1);
 });
