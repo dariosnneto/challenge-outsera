@@ -197,12 +197,17 @@ jobs:
 
       - name: Generate Allure report
         if: always()
-        uses: simple-elf/allure-report-action@master
-        with:
-          allure_results: mobile/reports/allure-results
-          allure_report: mobile/reports/allure-html
-          allure_history: mobile/reports/allure-history
-          keep_reports: 20
+        shell: bash
+        run: |
+          ALLURE_VERSION=2.27.0
+          ALLURE_DIR="$HOME/.allure"
+          if [ ! -f "$ALLURE_DIR/bin/allure" ]; then
+            curl -sL "https://github.com/allure-framework/allure2/releases/download/${ALLURE_VERSION}/allure-${ALLURE_VERSION}.zip" -o /tmp/allure.zip
+            unzip -q /tmp/allure.zip -d "$HOME/.allure-tmp"
+            mv "$HOME/.allure-tmp/allure-${ALLURE_VERSION}" "$ALLURE_DIR"
+            rm -rf "$HOME/.allure-tmp" /tmp/allure.zip
+          fi
+          "$ALLURE_DIR/bin/allure" generate mobile/reports/allure-results --clean -o mobile/reports/allure-html
 
       - name: Upload Mobile test report
         if: always()
