@@ -45,7 +45,7 @@ When(
 When('continuo para o resumo do pedido', async ({ page }) => {
   const checkout = new CheckoutPage(page);
   await checkout.continue();
-  // navigation assertion omitted intentionally — error scenarios assert in the following Then step
+  // asserção de navegação omitida intencionalmente — cenários de erro verificam no Then seguinte
 });
 
 When('finalizo o pedido', async ({ page }) => {

@@ -8,7 +8,7 @@ const HTML    = path.join(__dirname, 'reports', 'allure-html');
 const HISTORY = path.join(__dirname, 'reports', 'allure-history');
 const KEEP    = 2;
 
-// Rotate history: keep only the last KEEP runs
+// Rotaciona o histórico mantendo apenas as últimas KEEP execuções
 if (fs.existsSync(HISTORY)) {
   const runs = fs.readdirSync(HISTORY)
     .filter(f => fs.statSync(path.join(HISTORY, f)).isDirectory())
@@ -17,15 +17,15 @@ if (fs.existsSync(HISTORY)) {
   runs.slice(KEEP).forEach(run => fs.rmSync(path.join(HISTORY, run), { recursive: true, force: true }));
 }
 
-// Copy previous history into results so Allure picks it up
+// Copia o histórico anterior para os resultados para o Allure incluir nas tendências
 const historyInResults = path.join(RESULTS, 'history');
 const historySource    = path.join(HTML, 'history');
 if (fs.existsSync(historySource)) {
   fs.cpSync(historySource, historyInResults, { recursive: true });
 }
 
-// Fix scenarios with stage=pending and no status (bug in @wdio/allure-reporter v9 + Cucumber)
-// Infer scenario status from its steps: all passed → passed, any failed/broken → failed
+// Corrige cenários com stage=pending e sem status (bug do @wdio/allure-reporter v9 + Cucumber)
+// Infere o status do cenário a partir dos steps: todos passaram → passed, algum falhou → failed
 const resultFiles = fs.readdirSync(RESULTS).filter(f => f.endsWith('-result.json'));
 for (const file of resultFiles) {
   const filePath = path.join(RESULTS, file);
@@ -40,10 +40,10 @@ for (const file of resultFiles) {
   }
 }
 
-// Generate report
+// Gera o relatório Allure
 execSync(`npx allure generate "${RESULTS}" --clean -o "${HTML}"`, { stdio: 'inherit', cwd: ROOT });
 
-// Save this run's history for next time
+// Salva o histórico desta execução para a próxima
 if (fs.existsSync(path.join(HTML, 'history'))) {
   const runDir = path.join(HISTORY, new Date().toISOString().replace(/[:.]/g, '-'));
   fs.mkdirSync(runDir, { recursive: true });

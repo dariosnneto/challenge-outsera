@@ -15,7 +15,7 @@ function waitForWireMock(retries = 15, delayMs = 1000) {
     let attempts = 0;
     const check = () => {
       http.get('http://localhost:8080/__admin/health', (res) => {
-        res.resume(); // drain response body to free the socket
+        res.resume(); // descarta o corpo da resposta para liberar o socket
         if (res.statusCode === 200) return resolve();
         retry();
       }).on('error', () => retry());

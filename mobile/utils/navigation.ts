@@ -32,7 +32,7 @@ export async function navigateToProductsScreen(waitForItems = false): Promise<vo
   if (waitForItems) {
     const itemsVisible = await $(SEL.STORE_ITEM_TEXT).isDisplayed().catch(() => false);
     if (!itemsVisible) {
-      // products screen visible but items not loaded — restart app to get a fresh React Navigation state
+      // tela de produtos visível mas itens não carregados — reinicia o app para limpar o estado do React Navigation
       await driver.terminateApp(APP_PACKAGE);
       await driver.activateApp(APP_PACKAGE);
       await $(SEL.PRODUCTS_SCREEN).waitForDisplayed({ timeout: TIMEOUT.LONG });
