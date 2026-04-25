@@ -103,8 +103,28 @@ jobs:
           K6_SCENARIO: smoke
         run: npm run test:k6:mock
 
-      - name: Run K6 load test completo (scheduled)
+      - name: Run K6 load test (scheduled)
         if: github.event_name == 'schedule'
+        env:
+          K6_SCENARIO: load
+        run: npm run test:k6:mock
+
+      - name: Run K6 spike test (scheduled)
+        if: github.event_name == 'schedule'
+        env:
+          K6_SCENARIO: spike
+        run: npm run test:k6:mock
+
+      - name: Run K6 stress test (scheduled)
+        if: github.event_name == 'schedule'
+        env:
+          K6_SCENARIO: stress
+        run: npm run test:k6:mock
+
+      - name: Run K6 soak test (scheduled)
+        if: github.event_name == 'schedule'
+        env:
+          K6_SCENARIO: soak
         run: npm run test:k6:mock
 
       - name: Generate K6 HTML report

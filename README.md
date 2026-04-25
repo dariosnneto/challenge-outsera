@@ -50,17 +50,17 @@ challenge-outsera/
 │   │   ├── users.get.feature        # CT-A001–CT-A005  (5 cenários)
 │   │   ├── users.post.feature       # CT-A006–CT-A012  (7 cenários)
 │   │   ├── users.put.feature        # CT-A013–CT-A016  (4 cenários)
-│   │   └── users.delete.feature     # CT-A017–CT-A019  (3 cenários)
+│   │   └── users.delete.feature     # CT-A017–CT-A018  (2 cenários)
 │   ├── helpers/
-│   │   ├── api.client.ts            # Wrapper tipado HTTP: get, post, put, patch, delete
+│   │   ├── api.client.ts            # Wrapper tipado HTTP: get, post, put, putRaw, patch, delete
 │   │   └── constants.ts             # BASE_URL com fallback para reqres.in
 │   └── steps/
 │       └── users.api.steps.ts       # Step definitions Given/Then — todos os CT-Axxx
 │
 ├── e2e/
 │   ├── features/
-│   │   ├── login.feature            # CT-E001–CT-E005  (5 cenários)
-│   │   └── checkout.feature         # CT-E006–CT-E011  (6 cenários)
+│   │   ├── web.login.feature        # CT-E001–CT-E005  (5 cenários)
+│   │   └── web.checkout.feature     # CT-E006–CT-E011  (6 cenários)
 │   ├── pages/
 │   │   ├── BasePage.ts              # Locator de erro compartilhado (abstract)
 │   │   ├── LoginPage.ts             # navigate(), login(), getErrorMessage()
@@ -78,8 +78,8 @@ challenge-outsera/
 │   ├── config/
 │   │   └── wdio.conf.ts             # Configuração WebdriverIO + Appium + Cucumber
 │   ├── features/
-│   │   ├── login.feature            # CT-M001–CT-M003  (3 cenários)
-│   │   └── checkout.feature         # CT-M004–CT-M005  (2 cenários + Contexto)
+│   │   ├── mobile.login.feature     # CT-M001–CT-M003  (3 cenários)
+│   │   └── mobile.checkout.feature  # CT-M004–CT-M005  (2 cenários + Contexto)
 │   ├── screens/
 │   │   ├── BaseScreen.ts            # waitForDisplayed(), tap(), typeText(), isDisplayed()
 │   │   ├── LoginScreen.ts           # login(), getErrorMessage(), isErrorDisplayed()
@@ -89,7 +89,7 @@ challenge-outsera/
 │   │   ├── mobile.login.steps.ts    # Step definitions CT-M001–CT-M003
 │   │   └── mobile.checkout.steps.ts # Step definitions CT-M004–CT-M005
 │   └── utils/
-│       └── navigation.ts            # navigateToProductsScreen() — back-navigation helper
+│       └── navigation.ts            # ensureLoggedOut(), navigateToProductsScreen()
 │
 ├── k6/
 │   ├── helpers/
@@ -177,7 +177,7 @@ SAUCE_PASSWORD=secret_sauce
 
 ## Testes de API 🔌
 
-19 cenários BDD cobrindo GET, POST, PUT, PATCH e DELETE na API reqres.in.
+18 cenários BDD cobrindo GET, POST, PUT, PATCH e DELETE na API reqres.in.
 
 ```bash
 # Executar todos os testes de API
@@ -257,15 +257,21 @@ O hook `beforeScenario` em `wdio.conf.ts` executa `terminateApp` + `activateApp`
 
 ### Cenários disponíveis
 
-| Cenário | VUs | Duração | Uso |
-| ------- | --- | ------- | --- |
-| **smoke** | 3 VUs | 30s | Validação rápida em CI e desenvolvimento |
-| **load** | 0 → 500 VUs | 5 min (rampa) | Teste de capacidade — executar manualmente ou via schedule |
+| Cenário | VUs | Duração | Objetivo |
+| ------- | --- | ------- | -------- |
+| **smoke** | 0 → 3 → 0 | 30s | Validação rápida — sistema responde antes de qualquer carga |
+| **load** | 0 → 500 → 0 | 5 min | Capacidade nominal — rampagem linear escalonada |
+| **spike** | 10 → 500 → 10 | ~1m20s | Resiliência a picos abruptos de tráfego |
+| **stress** | 0 → 800 → 0 | 10 min | Ponto de ruptura — escalonamento além da capacidade nominal |
+| **soak** | 0 → 200 (oscilação) → 0 | ~21 min | Degradação ao longo do tempo — detecta vazamentos de memória |
 
 O cenário é controlado pela variável de ambiente `K6_SCENARIO`:
 
-- `K6_SCENARIO=smoke` → smoke test (3 VUs, 30s)
-- ausente → load test completo (500 VUs, 5 min)
+- `K6_SCENARIO=smoke` → smoke (3 VUs, 30s)
+- `K6_SCENARIO=load` → load completo (500 VUs, 5 min) — padrão quando ausente
+- `K6_SCENARIO=spike` → spike (500 VUs, pico abrupto)
+- `K6_SCENARIO=stress` → stress (800 VUs, escalonamento progressivo)
+- `K6_SCENARIO=soak` → soak (200 VUs, oscilação por ~21 min)
 
 ### Endpoints testados
 
@@ -307,14 +313,20 @@ O modo mock sobe um container WireMock na porta 8080 com stubs dos 3 endpoints, 
 **Requisito:** Docker em execução.
 
 ```bash
-# Smoke com mock (3 VUs, 30s)
+# Smoke (3 VUs, 30s)
 K6_SCENARIO=smoke npm run test:k6:mock
 
-# Load completo com mock (500 VUs, 5 min)
-npm run test:k6:mock
-
-# Load completo com mock + relatório HTML
+# Load completo (500 VUs, 5 min) + relatório HTML
 npm run test:k6:mock:report
+
+# Spike (pico abrupto até 500 VUs)
+npm run test:k6:spike
+
+# Stress (escalonamento até 800 VUs)
+npm run test:k6:stress
+
+# Soak (oscilação em 200 VUs por ~21 min)
+npm run test:k6:soak
 ```
 
 **Controle manual do WireMock:**
@@ -381,7 +393,7 @@ push / pull_request
 
 schedule (toda segunda-feira às 03:00 UTC)
   ├── api-tests      (igual)
-  ├── k6-tests       (K6 load completo — 500 VUs, 5 min, WireMock)
+  ├── k6-tests       (load → spike → stress → soak em sequência, WireMock)
   ├── e2e-tests      (igual)
   └── mobile-tests   (igual)
 ```
@@ -425,10 +437,13 @@ npm run test:mobile           # Testes Mobile (WebdriverIO + Appium)
 npm run report                # Abre relatório Playwright no browser
 npm run report:mobile         # Gera e abre relatório Allure (mobile)
 
-npm run test:k6               # K6 contra reqres.in (requer REQRES_API_KEY)
-npm run test:k6:report        # K6 + geração de relatório HTML
-npm run test:k6:mock          # K6 com WireMock via Docker (recomendado)
-npm run test:k6:mock:report   # K6 mock + geração de relatório HTML
+npm run test:k6               # K6 load contra reqres.in (requer REQRES_API_KEY)
+npm run test:k6:report        # K6 load + geração de relatório HTML
+npm run test:k6:mock          # K6 load com WireMock via Docker (recomendado)
+npm run test:k6:mock:report   # K6 load mock + geração de relatório HTML
+npm run test:k6:spike         # K6 spike — pico abrupto até 500 VUs (mock)
+npm run test:k6:stress        # K6 stress — escalonamento até 800 VUs (mock)
+npm run test:k6:soak          # K6 soak — oscilação em 200 VUs por ~21 min (mock)
 
 npm run wiremock:up           # Sobe WireMock manualmente
 npm run wiremock:down         # Derruba WireMock
