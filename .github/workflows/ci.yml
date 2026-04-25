@@ -221,6 +221,25 @@ jobs:
           if-no-files-found: ignore
           retention-days: 30
 
+      - name: Create root redirect to mobile report
+        if: always() && github.ref == 'refs/heads/main'
+        shell: bash
+        run: |
+          mkdir -p mobile/reports/gh-pages-root
+          cat > mobile/reports/gh-pages-root/index.html << 'EOF'
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="utf-8">
+            <meta http-equiv="refresh" content="0; url=mobile/">
+            <title>QA Report</title>
+          </head>
+          <body>
+            <p>Redirecting to <a href="mobile/">mobile report</a>...</p>
+          </body>
+          </html>
+          EOF
+
       - name: Deploy Allure report to GitHub Pages
         if: always() && github.ref == 'refs/heads/main'
         uses: peaceiris/actions-gh-pages@v4
@@ -229,3 +248,12 @@ jobs:
           publish_branch: gh-pages
           publish_dir: mobile/reports/allure-html
           destination_dir: mobile
+
+      - name: Deploy root redirect to GitHub Pages
+        if: always() && github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: mobile/reports/gh-pages-root
+          keep_files: true
