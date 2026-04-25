@@ -220,6 +220,7 @@ jobs:
 
           # Clone gh-pages branch into a sibling folder
           DEPLOY_DIR="../gh-pages-deploy"
+          rm -rf "$DEPLOY_DIR"
           git clone --branch gh-pages --single-branch "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" "$DEPLOY_DIR"
 
           # Root redirect
