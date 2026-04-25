@@ -218,33 +218,19 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git fetch origin gh-pages || true
-          git worktree add /tmp/gh-pages gh-pages 2>/dev/null || \
-            git worktree add /tmp/gh-pages --track -b gh-pages origin/gh-pages
+          # Clone gh-pages branch into a sibling folder
+          DEPLOY_DIR="../gh-pages-deploy"
+          git clone --branch gh-pages --single-branch "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" "$DEPLOY_DIR"
 
           # Root redirect
-          cat > /tmp/gh-pages/index.html << 'HTMLEOF'
-          <!DOCTYPE html>
-          <html>
-          <head>
-            <meta charset="utf-8">
-            <meta http-equiv="refresh" content="0; url=mobile/">
-            <title>QA Report</title>
-          </head>
-          <body>
-            <p>Redirecting to <a href="mobile/">mobile report</a>...</p>
-          </body>
-          </html>
-          HTMLEOF
+          printf '<!DOCTYPE html>\n<html>\n<head>\n  <meta charset="utf-8">\n  <meta http-equiv="refresh" content="0; url=mobile/">\n  <title>QA Report</title>\n</head>\n<body>\n  <p>Redirecting to <a href="mobile/">mobile report</a>...</p>\n</body>\n</html>\n' > "$DEPLOY_DIR/index.html"
 
           # Copy Allure report into mobile/
-          rm -rf /tmp/gh-pages/mobile
-          cp -r mobile/reports/allure-html /tmp/gh-pages/mobile
+          rm -rf "$DEPLOY_DIR/mobile"
+          cp -r mobile/reports/allure-html "$DEPLOY_DIR/mobile"
 
-          cd /tmp/gh-pages
+          cd "$DEPLOY_DIR"
           git add -A
           git diff --cached --quiet && echo "Nothing to deploy" || \
             git commit -m "deploy: allure mobile report (${{ github.sha }})" && \
             git push origin gh-pages
-
-          git worktree remove /tmp/gh-pages --force
