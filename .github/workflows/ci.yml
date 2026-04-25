@@ -9,6 +9,9 @@ on:
     # Load test completo toda segunda-feira às 03:00 UTC
     - cron: '0 3 * * 1'
 
+permissions:
+  contents: write
+
 jobs:
   api-tests:
     name: API Tests
@@ -194,7 +197,12 @@ jobs:
 
       - name: Generate Allure report
         if: always()
-        run: npx allure generate mobile/reports/allure-results --clean -o mobile/reports/allure-html
+        uses: simple-elf/allure-report-action@master
+        with:
+          allure_results: mobile/reports/allure-results
+          allure_report: mobile/reports/allure-html
+          allure_history: mobile/reports/allure-history
+          keep_reports: 20
 
       - name: Upload Mobile test report
         if: always()
@@ -204,3 +212,12 @@ jobs:
           path: mobile/reports/allure-html/
           if-no-files-found: ignore
           retention-days: 30
+
+      - name: Deploy Allure report to GitHub Pages
+        if: always() && github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: mobile/reports/allure-html
+          destination_dir: mobile
