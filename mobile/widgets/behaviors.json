@@ -1,1 +1,1 @@
-{"total":0,"items":[]}
+{"total":2,"items":[{"uid":"dd38d228b3266de430baca3ae44311bd","name":"Login no aplicativo móvel","statistic":{"failed":0,"broken":0,"skipped":0,"passed":13,"unknown":0,"total":13}},{"uid":"297bf553540aed560921148e862b324d","name":"Formulário de checkout no aplicativo móvel","statistic":{"failed":0,"broken":0,"skipped":0,"passed":13,"unknown":0,"total":13}}]}
