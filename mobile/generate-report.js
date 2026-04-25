@@ -24,6 +24,22 @@ if (fs.existsSync(historySource)) {
   fs.cpSync(historySource, historyInResults, { recursive: true });
 }
 
+// Fix scenarios with stage=pending and no status (bug in @wdio/allure-reporter v9 + Cucumber)
+// Infer scenario status from its steps: all passed → passed, any failed/broken → failed
+const resultFiles = fs.readdirSync(RESULTS).filter(f => f.endsWith('-result.json'));
+for (const file of resultFiles) {
+  const filePath = path.join(RESULTS, file);
+  const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+  if (data.stage === 'pending' && !data.status) {
+    const stepStatuses = (data.steps || []).map(s => s.status);
+    const hasFailed = stepStatuses.some(s => s === 'failed' || s === 'broken');
+    data.status = hasFailed ? 'failed' : 'passed';
+    data.stage = 'finished';
+    data.stop = data.stop || Date.now();
+    fs.writeFileSync(filePath, JSON.stringify(data));
+  }
+}
+
 // Generate report
 execSync(`npx allure generate "${RESULTS}" --clean -o "${HTML}"`, { stdio: 'inherit', cwd: ROOT });
 

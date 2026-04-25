@@ -49,6 +49,7 @@ export const config = {
     await browser.pause(TIMEOUT.PAUSE_LG);
   },
 
+
   bail: 0,
   retries: process.env.CI ? 1 : 0,
   waitforTimeout: TIMEOUT.LONG,
