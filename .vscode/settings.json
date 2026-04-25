@@ -1,10 +1,12 @@
 {
   "cucumber.features": [
     "e2e/features/**/*.feature",
-    "api/features/**/*.feature"
+    "api/features/**/*.feature",
+    "mobile/features/**/*.feature"
   ],
   "cucumber.glue": [
     "e2e/steps/**/*.ts",
-    "api/steps/**/*.ts"
+    "api/steps/**/*.ts",
+    "mobile/steps/**/*.ts"
   ]
 }

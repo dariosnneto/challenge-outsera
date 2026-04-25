@@ -1,37 +1,43 @@
-# 🧪 QA Automation Challenge — Outsera
+# QA Automation Challenge — Outsera
 
-Framework de automação de testes cobrindo **API REST** (reqres.in), **E2E web** (saucedemo.com) e **testes de carga** (K6) com BDD em Gherkin (Português), usando Playwright + TypeScript + K6.
+Framework de automação de testes cobrindo **API REST** (reqres.in), **E2E web** (saucedemo.com), **Mobile Android** (My Demo App RN) e **testes de carga** (K6) com BDD em Gherkin (Português), usando Playwright + WebdriverIO + TypeScript + K6.
 
 ---
 
-## Índice
+## Índice 📑
 
-1. 🛠️ [Stack](#stack)
-2. 📁 [Estrutura de Pastas](#estrutura-de-pastas)
-3. ⚙️ [Instalação](#instalação)
-4. 🔑 [Variáveis de Ambiente](#variáveis-de-ambiente)
-5. 🔌 [Testes de API](#testes-de-api)
-6. 🌐 [Testes E2E](#testes-e2e)
-7. 🚀 [Testes de Carga K6](#testes-de-carga-k6)
-8. 📈 [Relatórios](#relatórios)
-9. 🤖 [CI — GitHub Actions](#ci--github-actions)
-10. 📜 [Scripts disponíveis](#scripts-disponíveis)
+1. [Stack](#stack-)
+2. [Estrutura de Pastas](#estrutura-de-pastas-)
+3. [Instalação](#instalação-)
+4. [Variáveis de Ambiente](#variáveis-de-ambiente-)
+5. [Testes de API](#testes-de-api-)
+6. [Testes E2E](#testes-e2e-)
+7. [Testes Mobile](#testes-mobile-)
+8. [Testes de Carga K6](#testes-de-carga-k6-)
+9. [Relatórios](#relatórios-)
+10. [CI — GitHub Actions](#ci--github-actions-)
+11. [Scripts disponíveis](#scripts-disponíveis-)
 
 ---
 
 ## Stack 🛠️
 
-| Ferramenta         | Versão   | Função                                   |
-| ------------------ | -------- | ---------------------------------------- |
-| Node.js            | >= 24    | Runtime                                  |
-| TypeScript         | ^5.4     | Tipagem estática                         |
-| Playwright         | ^1.44    | Runner de testes API e E2E               |
-| playwright-bdd     | ^7.4     | Integração Gherkin + Playwright          |
-| @cucumber/cucumber | ^10.8    | Runner alternativo Cucumber (legado)     |
-| K6                 | >= 0.50  | Testes de carga                          |
-| k6-html-reporter   | ^1.0.5   | Relatório HTML do K6                     |
-| WireMock           | latest   | Mock server para K6 (via Docker)         |
-| dotenv             | ^17      | Variáveis de ambiente                    |
+| Ferramenta                   | Versão    | Função                                |
+| ---------------------------- | --------- | ------------------------------------- |
+| Node.js                      | >= 24     | Runtime                               |
+| TypeScript                   | ^5.4      | Tipagem estática                      |
+| Playwright                   | ^1.44     | Runner de testes API e E2E            |
+| playwright-bdd               | ^7.4      | Integração Gherkin + Playwright       |
+| WebdriverIO                  | ^9.27     | Runner de testes Mobile (Appium)      |
+| @wdio/cucumber-framework     | ^9.27     | Integração Gherkin + WebdriverIO      |
+| Appium                       | ^3.3      | Automação Android                     |
+| appium-uiautomator2-driver   | ^7.1      | Driver Android UiAutomator2           |
+| @wdio/allure-reporter        | ^9.27     | Relatório Allure para testes mobile   |
+| @cucumber/cucumber           | ^10.8     | Runner alternativo Cucumber (legado)  |
+| K6                           | >= 0.50   | Testes de carga                       |
+| k6-html-reporter             | ^1.0.5    | Relatório HTML do K6                  |
+| WireMock                     | latest    | Mock server para K6 (via Docker)      |
+| dotenv                       | ^17       | Variáveis de ambiente                 |
 
 ---
 
@@ -62,9 +68,28 @@ challenge-outsera/
 │   │   ├── CartPage.ts              # getCartItems(), proceedToCheckout(), removeItem()
 │   │   └── CheckoutPage.ts          # fillForm(), continue(), finish(), getConfirmationMessage()
 │   ├── steps/
-│   │   ├── login.steps.ts           # Step definitions CT-E001–CT-E005
-│   │   └── checkout.steps.ts        # Step definitions CT-E006–CT-E011
+│   │   ├── web.login.steps.ts       # Step definitions CT-E001–CT-E005
+│   │   └── web.checkout.steps.ts    # Step definitions CT-E006–CT-E011
 │   └── bdd.setup.ts                 # Global setup — executa bddgen antes dos testes
+│
+├── mobile/
+│   ├── apps/
+│   │   └── MyDemoAppRN.apk          # APK do app de demonstração Sauce Labs
+│   ├── config/
+│   │   └── wdio.conf.ts             # Configuração WebdriverIO + Appium + Cucumber
+│   ├── features/
+│   │   ├── login.feature            # CT-M001–CT-M003  (3 cenários)
+│   │   └── checkout.feature         # CT-M004–CT-M005  (2 cenários + Contexto)
+│   ├── screens/
+│   │   ├── BaseScreen.ts            # waitForDisplayed(), tap(), typeText(), isDisplayed()
+│   │   ├── LoginScreen.ts           # login(), getErrorMessage(), isErrorDisplayed()
+│   │   ├── ProductsScreen.ts        # isLoaded(), tapFirstProduct(), tapCart()
+│   │   └── CheckoutScreen.ts        # fillForm(), tapToPayment(), isErrorDisplayed()
+│   ├── steps/
+│   │   ├── mobile.login.steps.ts    # Step definitions CT-M001–CT-M003
+│   │   └── mobile.checkout.steps.ts # Step definitions CT-M004–CT-M005
+│   └── utils/
+│       └── navigation.ts            # navigateToProductsScreen() — back-navigation helper
 │
 ├── k6/
 │   ├── helpers/
@@ -82,10 +107,9 @@ challenge-outsera/
 │
 ├── .github/
 │   └── workflows/
-│       └── ci.yml                   # Pipeline: 3 jobs em paralelo + schedule semanal K6
+│       └── ci.yml                   # Pipeline: 4 jobs — api, e2e, k6 (ubuntu) + mobile (self-hosted)
 ├── docker-compose.yml               # Serviço WireMock na porta 8080
 ├── playwright.config.ts             # 2 projetos BDD: api | e2e
-├── cucumber.js                      # Config runner legado cucumber-js
 ├── tsconfig.json
 └── package.json
 ```
@@ -101,6 +125,16 @@ npm install
 npx playwright install chromium
 ```
 
+### Pré-requisitos para Mobile
+
+| Requisito | Versão mínima | Descrição |
+| --------- | ------------- | --------- |
+| Android SDK | API 14+ | `ANDROID_HOME` configurado no ambiente |
+| Emulador Android | API 14 | `emulator-5554` em execução antes dos testes |
+| Java JDK | 11+ | Necessário para o Appium UiAutomator2 |
+
+O Appium e o driver UiAutomator2 são instalados como dependências do projeto (`npm install`) — não é necessária instalação global.
+
 ### Pré-requisitos para K6
 
 | Requisito | Instalação |
@@ -115,8 +149,6 @@ winget install k6 --source winget
 # ou via Chocolatey
 choco install k6
 ```
-
-O `run-k6.js` espera o binário em `C:\Program Files\k6\k6.exe` no Windows e `k6` no PATH no Linux/macOS.
 
 ---
 
@@ -174,6 +206,53 @@ npx playwright test --project=e2e --grep "@CT-E006-CHECKOUT-COMPLETO-COM-UM-PROD
 
 ---
 
+## Testes Mobile 📱
+
+5 cenários BDD cobrindo login e checkout no app Android **My Demo App RN** (Sauce Labs).
+
+**Pré-condição:** emulador `emulator-5554` com Android 14 em execução.
+
+```bash
+# Executar todos os testes mobile
+npm run test:mobile
+
+# Executar um cenário específico por tag
+npx wdio run mobile/config/wdio.conf.ts --cucumberOpts.tagExpression="@CT-M001"
+
+# Gerar e abrir relatório Allure
+npm run report:mobile
+```
+
+### Cenários cobertos
+
+| Tag | Cenário | Feature |
+| --- | ------- | ------- |
+| CT-M001 | Login bem-sucedido exibe a tela de produtos | login |
+| CT-M002 | Login com credenciais inválidas exibe mensagem de erro | login |
+| CT-M003 | Login e navegação para detalhes do produto | login |
+| CT-M004 | Preencher formulário completo e avançar para pagamento | checkout |
+| CT-M005 | Enviar formulário sem nome completo exibe erro | checkout |
+
+### Configuração do emulador
+
+O arquivo [mobile/config/wdio.conf.ts](mobile/config/wdio.conf.ts) espera:
+
+| Capability | Valor |
+| ---------- | ----- |
+| `platformName` | `Android` |
+| `appium:deviceName` | `emulator-5554` |
+| `appium:platformVersion` | `14.0` |
+| `appium:automationName` | `UiAutomator2` |
+| `appium:app` | `mobile/apps/MyDemoAppRN.apk` |
+
+Para usar um device ou versão diferente, edite `mobile/config/wdio.conf.ts`.
+
+### Isolamento entre cenários
+
+O hook `beforeScenario` em `wdio.conf.ts` executa `terminateApp` + `activateApp` antes de cada cenário, garantindo estado limpo. O helper [mobile/utils/navigation.ts](mobile/utils/navigation.ts) lida com o estado de navegação do React Native, fazendo back-navigation até a tela de produtos quando necessário.
+
+---
+
 ## Testes de Carga K6 🚀
 
 ### Cenários disponíveis
@@ -228,7 +307,7 @@ O modo mock sobe um container WireMock na porta 8080 com stubs dos 3 endpoints, 
 **Requisito:** Docker em execução.
 
 ```bash
-# Smoke com mock (3 VUs, 30s) — ~35 segundos no total
+# Smoke com mock (3 VUs, 30s)
 K6_SCENARIO=smoke npm run test:k6:mock
 
 # Load completo com mock (500 VUs, 5 min)
@@ -238,90 +317,20 @@ npm run test:k6:mock
 npm run test:k6:mock:report
 ```
 
-**Saída esperada (smoke):**
-
-```text
-[mock] Starting WireMock...
-[mock] WireMock ready. Running K6 against http://localhost:8080/api
-
-✓ status is 200
-✓ response time < 2000ms
-✓ body has 'data'
-✓ status is 201
-✓ body has 'id'
-
-checks.........................: 100.00%
-http_req_failed................: 0.00%
-http_req_duration p(95)........: < 2000ms
-
-[mock] Stopping WireMock...
-```
-
 **Controle manual do WireMock:**
 
 ```bash
-# Subir o WireMock
 npm run wiremock:up
-
-# Verificar saúde
 curl http://localhost:8080/__admin/health
-
-# Testar stubs manualmente
-curl http://localhost:8080/api/users?page=1
-curl http://localhost:8080/api/users/1
-curl -X POST http://localhost:8080/api/users \
-  -H "Content-Type: application/json" \
-  -d '{"name":"test","job":"dev"}'
-
-# Derrubar o WireMock
 npm run wiremock:down
 ```
 
----
-
-### Executar K6 diretamente (sem o orquestrador Node)
-
-```bash
-# Smoke contra WireMock (subir WireMock antes com npm run wiremock:up)
-"C:\Program Files\k6\k6.exe" run \
-  --vus 3 --duration 30s \
-  --env BASE_URL=http://localhost:8080/api \
-  --env K6_SCENARIO=smoke \
-  k6/load-test.ts
-
-# Smoke contra reqres.in
-"C:\Program Files\k6\k6.exe" run \
-  --vus 3 --duration 30s \
-  --env REQRES_API_KEY=sua_chave \
-  --env K6_SCENARIO=smoke \
-  k6/load-test.ts
-```
-
----
-
-### Relatório HTML do K6 📊
-
-O relatório é gerado a partir do JSON produzido pelo `handleSummary()` em `load-test.ts`. Ele é gravado automaticamente em `reports/k6/summary-handleSummary.json` ao final de cada execução.
-
-```bash
-# Gerar relatório HTML após uma execução
-node k6/generate-report.js
-
-# Ou usar o script combinado
-npm run test:k6:mock:report
-```
-
-O relatório HTML fica em `reports/k6/index.html`.
-
----
-
-### Troubleshooting K6 🔧
+### Troubleshooting K6
 
 | Problema | Causa | Solução |
 | -------- | ----- | ------- |
 | `http_req_failed rate = 99%` | Rate limit 429 do reqres.in free tier | Usar modo mock: `npm run test:k6:mock` |
-| `WireMock did not start in time` | Docker não iniciou a tempo | Verificar se Docker está rodando; aumentar `retries` em `run-k6.js` |
-| `Cannot find module './helpers/http-client'` | K6 v1.7+ exige extensão `.ts` | Os imports já incluem `.ts` — verificar versão do K6 |
+| `WireMock did not start in time` | Docker não iniciou a tempo | Verificar se Docker está rodando |
 | `k6: command not found` | K6 não instalado ou fora do PATH | Instalar K6 conforme instruções acima |
 | Relatório HTML vazio | `summary-handleSummary.json` não gerado | Executar o teste antes de gerar o relatório |
 
@@ -331,38 +340,50 @@ O relatório HTML fica em `reports/k6/index.html`.
 
 | Relatório | Caminho | Como gerar |
 | --------- | ------- | ---------- |
-| Playwright HTML | `reports/html/` | Gerado automaticamente após os testes |
-| Playwright JSON | `reports/results.json` | Gerado automaticamente após os testes |
-| Cucumber BDD HTML | `reports/cucumber-bdd.html` | Gerado automaticamente após os testes |
+| Playwright HTML | `reports/html/` | Automático após os testes |
+| Playwright JSON | `reports/results.json` | Automático após os testes |
+| Cucumber BDD HTML | `reports/cucumber-bdd.html` | Automático após os testes |
 | K6 HTML | `reports/k6/index.html` | `npm run test:k6:mock:report` |
-| K6 JSON (handleSummary) | `reports/k6/summary-handleSummary.json` | Gerado automaticamente pelo K6 |
+| K6 JSON (handleSummary) | `reports/k6/summary-handleSummary.json` | Automático pelo K6 |
+| Allure Mobile HTML | `mobile/reports/allure-html/` | `npm run report:mobile` |
 
 ```bash
 # Abrir relatório Playwright no browser
 npm run report
+
+# Gerar e abrir relatório Allure (mobile)
+npm run report:mobile
 ```
 
 ---
 
 ## CI — GitHub Actions 🤖
 
-O pipeline executa **3 jobs em paralelo** a cada push ou PR para `main` e `develop`.
+O pipeline executa **4 jobs** a cada push ou PR para `main` e `develop`. Os jobs de API, E2E e K6 rodam em paralelo em `ubuntu-latest`. O job Mobile requer um **self-hosted runner** com emulador Android configurado.
 
 ```text
 push / pull_request
-  ├── api-tests    (Playwright API BDD — 19 cenários)
-  ├── k6-tests     (K6 smoke — 3 VUs, 30s, WireMock mock)
-  └── e2e-tests    (Playwright E2E BDD — 11 cenários)
+  ├── api-tests      (ubuntu-latest — Playwright API BDD, 19 cenários)
+  ├── k6-tests       (ubuntu-latest — K6 smoke, 3 VUs, 30s, WireMock)
+  ├── e2e-tests      (ubuntu-latest — Playwright E2E BDD, 11 cenários)
+  └── mobile-tests   (self-hosted   — Appium Android BDD, 5 cenários)
 
 schedule (toda segunda-feira às 03:00 UTC)
-  ├── api-tests    (igual)
-  ├── k6-tests     (K6 load completo — 500 VUs, 5 min, WireMock mock)
-  └── e2e-tests    (igual)
+  ├── api-tests      (igual)
+  ├── k6-tests       (K6 load completo — 500 VUs, 5 min, WireMock)
+  ├── e2e-tests      (igual)
+  └── mobile-tests   (igual)
 ```
 
-### Por que smoke no CI e load no schedule?
+### Por que mobile usa self-hosted runner?
 
-Testes de carga (500 VUs, 5 min) não pertencem ao pipeline de PR — seu objetivo é medir capacidade, não corretude. Rodá-los em todo push desperdiçaria ~7 minutos de runner e poderia causar falsos negativos por timeout. O smoke (30s) valida que os 3 endpoints respondem corretamente sem bloquear o feedback de desenvolvimento.
+O GitHub Actions `ubuntu-latest` não disponibiliza KVM (virtualização de hardware) nos runners compartilhados. Sem KVM, o emulador Android roda via software (~10–30x mais lento) e frequentemente não inicializa. O self-hosted runner resolve isso usando a máquina local onde o emulador já está configurado e funcionando.
+
+### Configurar self-hosted runner
+
+1. No repositório GitHub: **Settings → Actions → Runners → New self-hosted runner**
+2. Seguir as instruções de instalação para o seu SO
+3. O runner precisa ter: Node.js 24, Android SDK, emulador configurado (`emulator-5554`)
 
 ### Secrets e variáveis necessárias no GitHub
 
@@ -374,11 +395,12 @@ Testes de carga (500 VUs, 5 min) não pertencem ao pipeline de PR — seu objeti
 | `SAUCE_USERNAME` | Secret | Usuário SauceDemo (opcional, padrão: `standard_user`) |
 | `SAUCE_PASSWORD` | Secret | Senha SauceDemo (opcional, padrão: `secret_sauce`) |
 
-Artifacts de cada execução ficam disponíveis por **30 dias** na aba **Actions** do repositório:
+Artifacts ficam disponíveis por **30 dias** na aba **Actions**:
 
 - `api-test-report`
 - `k6-load-test-report`
 - `e2e-test-report`
+- `mobile-test-report`
 
 ---
 
@@ -388,8 +410,9 @@ Artifacts de cada execução ficam disponíveis por **30 dias** na aba **Actions
 npm run test:api              # Testes de API (Playwright BDD)
 npm run test:e2e              # Testes E2E (Playwright BDD)
 npm run test:all              # API + E2E em sequência
-npm run test:e2e:cucumber     # Testes E2E via runner Cucumber legado
+npm run test:mobile           # Testes Mobile (WebdriverIO + Appium)
 npm run report                # Abre relatório Playwright no browser
+npm run report:mobile         # Gera e abre relatório Allure (mobile)
 
 npm run test:k6               # K6 contra reqres.in (requer REQRES_API_KEY)
 npm run test:k6:report        # K6 + geração de relatório HTML

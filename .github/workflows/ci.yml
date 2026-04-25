@@ -155,3 +155,52 @@ jobs:
           path: reports/
           if-no-files-found: ignore
           retention-days: 30
+
+  mobile-tests:
+    name: Mobile Tests (Android)
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js 24
+        uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check (mobile)
+        run: npx tsc --project mobile/tsconfig.json --noEmit
+
+      - name: Start Appium server
+        run: npx appium &
+        shell: bash
+
+      - name: Wait for Appium to be ready
+        run: |
+          for i in $(seq 1 15); do
+            curl -s http://127.0.0.1:4723/status && break
+            echo "Waiting for Appium... ($i)"
+            sleep 2
+          done
+        shell: bash
+
+      - name: Run Mobile tests
+        run: npm run test:mobile
+
+      - name: Generate Allure report
+        if: always()
+        run: npx allure generate mobile/reports/allure-results --clean -o mobile/reports/allure-html
+
+      - name: Upload Mobile test report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: mobile-test-report
+          path: mobile/reports/allure-html/
+          if-no-files-found: ignore
+          retention-days: 30
