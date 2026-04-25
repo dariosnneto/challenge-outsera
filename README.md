@@ -345,7 +345,8 @@ npm run wiremock:down
 | Cucumber BDD HTML | `reports/cucumber-bdd.html` | Automático após os testes |
 | K6 HTML | `reports/k6/index.html` | `npm run test:k6:mock:report` |
 | K6 JSON (handleSummary) | `reports/k6/summary-handleSummary.json` | Automático pelo K6 |
-| Allure Mobile HTML | `mobile/reports/allure-html/` | `npm run report:mobile` |
+| Allure Mobile (local) | `mobile/reports/allure-html/` | `npm run report:mobile` |
+| Allure Mobile (CI) | GitHub Pages | Publicado automaticamente a cada push em `main` |
 
 ```bash
 # Abrir relatório Playwright no browser
@@ -354,6 +355,16 @@ npm run report
 # Gerar e abrir relatório Allure (mobile)
 npm run report:mobile
 ```
+
+### Relatório Allure Mobile no CI 🌐
+
+O relatório Allure do módulo mobile é publicado automaticamente no **GitHub Pages** após cada execução do CI na branch `main`.
+
+> **Por que não usar o artifact ZIP?** O Allure gera múltiplos arquivos (HTML + JS + JSON). Ao extrair o ZIP e abrir o `index.html` localmente, o browser bloqueia as requisições entre arquivos por política de segurança (`file://`), resultando em tela em branco. O GitHub Pages serve os arquivos via HTTP, resolvendo o problema.
+
+**URL do relatório:** `https://dariosnneto.github.io/challenge-outsera/mobile/`
+
+Acessar a raiz `https://dariosnneto.github.io/challenge-outsera/` redireciona automaticamente para o relatório mobile.
 
 ---
 
