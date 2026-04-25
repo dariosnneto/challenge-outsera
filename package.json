@@ -15,7 +15,7 @@
     "wiremock:up": "docker compose up -d wiremock",
     "wiremock:down": "docker compose down",
     "test:mobile": "wdio run mobile/config/wdio.conf.ts",
-    "report:mobile": "allure generate mobile/reports/allure-results --clean -o mobile/reports/allure-html && allure open mobile/reports/allure-html"
+    "report:mobile": "node mobile/generate-report.js && allure open mobile/reports/allure-html"
   },
   "devDependencies": {
     "@cucumber/cucumber": "^10.8.0",
