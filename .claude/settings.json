@@ -24,11 +24,21 @@
       "Bash(grep -n \"^\\\\`\\\\`\\\\`\" README.md)",
       "Bash(git status *)",
       "Bash(git add *)",
-      "Bash(git commit -m ' *)"
+      "Bash(git commit -m ' *)",
+      "Bash(appium --version)",
+      "PowerShell(npm install -g appium 2>&1)",
+      "PowerShell(tail -5)",
+      "Read(//c//**)",
+      "Read(//c/AgentQA/**)",
+      "Read(//c/AgenteQA-Master/**)",
+      "Bash(curl -s https://api.github.com/repos/actions/runner/releases/latest)",
+      "Bash(curl -L -o C:/actions-runner/runner.zip \"https://github.com/actions/runner/releases/download/v2.334.0/actions-runner-win-x64-2.334.0.zip\")",
+      "PowerShell(Add-Type -AssemblyName System.IO.Compression.FileSystem; [System.IO.Compression.ZipFile]::ExtractToDirectory\\(\"C:\\\\actions-runner\\\\runner.zip\", \"C:\\\\actions-runner\"\\); Write-Output \"Extracted\")"
     ],
     "additionalDirectories": [
       "C:\\challenge-outsera\\api",
-      "C:\\challenge-outsera"
+      "C:\\challenge-outsera",
+      "C:\\"
     ]
   }
 }
