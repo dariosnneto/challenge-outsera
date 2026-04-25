@@ -1,13 +1,13 @@
 import { Page, Locator } from '@playwright/test';
+import { BasePage } from './BasePage';
 
-export class DashboardPage {
-  readonly page: Page;
+export class DashboardPage extends BasePage {
   readonly pageTitle: Locator;
   readonly productList: Locator;
   readonly cartIcon: Locator;
 
   constructor(page: Page) {
-    this.page = page;
+    super(page);
     this.pageTitle = page.locator('.title');
     this.productList = page.locator('.inventory_item');
     this.cartIcon = page.locator('.shopping_cart_link');

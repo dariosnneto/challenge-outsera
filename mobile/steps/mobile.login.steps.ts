@@ -2,28 +2,11 @@ import { Given, When, Then } from '@wdio/cucumber-framework';
 import { expect } from '@wdio/globals';
 import LoginScreen from '../screens/LoginScreen';
 import ProductsScreen from '../screens/ProductsScreen';
-import { navigateToProductsScreen } from '../utils/navigation';
-import { SEL, TIMEOUT } from '../constants';
+import { ensureLoggedOut, navigateToProductsScreen } from '../utils/navigation';
+import { SEL } from '../constants';
 
 Given('que estou na tela de login', async () => {
-  await navigateToProductsScreen();
-  await $(SEL.OPEN_MENU).click();
-  await browser.pause(TIMEOUT.PAUSE_SM);
-  const logoutItem = await $(SEL.MENU_ITEM_LOG_OUT);
-  const isLoggedIn = await logoutItem.isDisplayed();
-  if (isLoggedIn) {
-    await logoutItem.click();
-    await browser.pause(TIMEOUT.LOGOUT);
-    await $(SEL.DIALOG_POSITIVE).waitForDisplayed({ timeout: TIMEOUT.SHORT });
-    await $(SEL.DIALOG_POSITIVE).click();
-    await browser.pause(TIMEOUT.PAUSE_MD);
-    await $(SEL.DIALOG_POSITIVE).waitForDisplayed({ timeout: TIMEOUT.SHORT });
-    await $(SEL.DIALOG_POSITIVE).click();
-    await browser.pause(TIMEOUT.PAUSE_MD);
-  } else {
-    await $(SEL.MENU_ITEM_LOG_IN).click();
-    await browser.pause(TIMEOUT.PAUSE_MD);
-  }
+  await ensureLoggedOut();
   await LoginScreen.waitForDisplayed(SEL.LOGIN_SCREEN);
 });
 
@@ -32,13 +15,7 @@ When('faço login com usuário {string} e senha {string}', async (username: stri
 });
 
 Then('devo ver a tela de produtos', async () => {
-  for (let i = 0; i < 8; i++) {
-    const visible = await $(SEL.PRODUCTS_SCREEN).isDisplayed().catch(() => false);
-    if (visible) break;
-    await browser.back();
-    await browser.pause(TIMEOUT.PAUSE_MD);
-  }
-  await $(SEL.PRODUCTS_SCREEN).waitForDisplayed({ timeout: TIMEOUT.DEFAULT });
+  await navigateToProductsScreen();
   const loaded = await ProductsScreen.isLoaded();
   expect(loaded).toBe(true);
 });

@@ -3,28 +3,11 @@ import { expect } from '@wdio/globals';
 import LoginScreen from '../screens/LoginScreen';
 import ProductsScreen from '../screens/ProductsScreen';
 import CheckoutScreen from '../screens/CheckoutScreen';
-import { navigateToProductsScreen } from '../utils/navigation';
+import { ensureLoggedOut, navigateToProductsScreen } from '../utils/navigation';
 import { SEL, TIMEOUT } from '../constants';
 
 Given('que estou autenticado com usuário {string} e senha {string}', async (username: string, password: string) => {
-  await navigateToProductsScreen();
-  await $(SEL.OPEN_MENU).click();
-  await browser.pause(TIMEOUT.PAUSE_SM);
-  const logoutItem = await $(SEL.MENU_ITEM_LOG_OUT);
-  const isLoggedIn = await logoutItem.isDisplayed();
-  if (isLoggedIn) {
-    await logoutItem.click();
-    await browser.pause(TIMEOUT.LOGOUT);
-    await $(SEL.DIALOG_POSITIVE).waitForDisplayed({ timeout: TIMEOUT.SHORT });
-    await $(SEL.DIALOG_POSITIVE).click();
-    await browser.pause(TIMEOUT.PAUSE_MD);
-    await $(SEL.DIALOG_POSITIVE).waitForDisplayed({ timeout: TIMEOUT.SHORT });
-    await $(SEL.DIALOG_POSITIVE).click();
-    await browser.pause(TIMEOUT.PAUSE_MD);
-  } else {
-    await $(SEL.MENU_ITEM_LOG_IN).click();
-    await browser.pause(TIMEOUT.PAUSE_MD);
-  }
+  await ensureLoggedOut();
   await LoginScreen.waitForDisplayed(SEL.LOGIN_SCREEN);
   await LoginScreen.login(username, password);
   await navigateToProductsScreen();
@@ -41,12 +24,8 @@ Given('naveguei até o checkout', async () => {
   await $(SEL.PROCEED_TO_CHECKOUT).click();
 });
 
-When('preencho o formulário com os dados:', async (dataTable: { rows: () => string[][] }) => {
-  const rows = dataTable.rows();
-  const data: Record<string, string> = {};
-  for (const [campo, valor] of rows) {
-    data[campo] = valor;
-  }
+When('preencho o formulário com os dados:', async (dataTable: { rowsHash: () => Record<string, string> }) => {
+  const data = dataTable.rowsHash();
   await CheckoutScreen.fillForm({
     fullName: data['fullName'],
     address:  data['address'],
@@ -66,7 +45,7 @@ When('toco em {string} sem preencher o formulário', async (_button: string) => 
 });
 
 Then('devo avançar para a tela de pagamento', async () => {
-  const paymentScreen = await $(SEL.CHECKOUT_PAYMENT);
+  const paymentScreen = $(SEL.CHECKOUT_PAYMENT);
   await paymentScreen.waitForDisplayed({ timeout: TIMEOUT.DEFAULT });
   expect(await paymentScreen.isDisplayed()).toBe(true);
 });

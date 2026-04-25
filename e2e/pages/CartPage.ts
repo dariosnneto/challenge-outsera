@@ -1,12 +1,12 @@
 import { Page, Locator } from '@playwright/test';
+import { BasePage } from './BasePage';
 
-export class CartPage {
-  readonly page: Page;
+export class CartPage extends BasePage {
   readonly cartItems: Locator;
   readonly checkoutButton: Locator;
 
   constructor(page: Page) {
-    this.page = page;
+    super(page);
     this.cartItems = page.locator('.cart_item');
     this.checkoutButton = page.locator('[data-test="checkout"]');
   }

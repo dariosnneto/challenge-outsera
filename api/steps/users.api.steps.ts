@@ -26,10 +26,6 @@ function getResponse(request: object): ApiResponse {
 
 type BddDataTable = { rowsHash(): Record<string, string> };
 
-function parseTable(dataTable: BddDataTable): Record<string, string> {
-  return dataTable.rowsHash();
-}
-
 function getField(body: unknown, field: string): unknown {
   return field.split('.').reduce((obj, key) => (obj as Record<string, unknown>)?.[key], body);
 }
@@ -65,7 +61,7 @@ Given(
   'que faço um POST em {string} com os dados:',
   async ({ request }, path: string, dataTable: BddDataTable) => {
     const client = makeClient(request);
-    const res = await client.post(path, parseTable(dataTable));
+    const res = await client.post(path, dataTable.rowsHash());
     const s = getState(request);
     s.response = res;
     s.responses = [res];
@@ -84,7 +80,7 @@ Given(
   'que faço um PUT em {string} com os dados:',
   async ({ request }, path: string, dataTable: BddDataTable) => {
     const client = makeClient(request);
-    const res = await client.put(path, parseTable(dataTable));
+    const res = await client.put(path, dataTable.rowsHash());
     const s = getState(request);
     s.response = res;
     s.responses = [res];
@@ -109,7 +105,7 @@ Given(
   'que faço um PATCH em {string} com os dados:',
   async ({ request }, path: string, dataTable: BddDataTable) => {
     const client = makeClient(request);
-    const res = await client.patch(path, parseTable(dataTable));
+    const res = await client.patch(path, dataTable.rowsHash());
     const s = getState(request);
     s.response = res;
     s.responses = [res];
