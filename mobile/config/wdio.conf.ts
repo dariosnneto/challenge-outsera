@@ -64,8 +64,6 @@ export const config = {
       'allure',
       {
         outputDir: 'mobile/reports/allure-results',
-        disableWebdriverStepsReporting: true,
-        useCucumberStepReporter: true,
         addConsoleLogs: true,
       },
     ],
