@@ -1,3 +1,4 @@
+.claude/
 node_modules/
 dist/
 reports/
@@ -8,3 +9,4 @@ screen.xml
 .env
 .env.*
 *.local
+report.md
