@@ -211,12 +211,19 @@ jobs:
           if-no-files-found: ignore
           retention-days: 30
 
-      - name: Create root redirect to mobile report
+      - name: Deploy Allure report to GitHub Pages
         if: always() && github.ref == 'refs/heads/main'
         shell: bash
         run: |
-          mkdir -p mobile/reports/gh-pages-root
-          cat > mobile/reports/gh-pages-root/index.html << 'EOF'
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git fetch origin gh-pages || true
+          git worktree add /tmp/gh-pages gh-pages 2>/dev/null || \
+            git worktree add /tmp/gh-pages --track -b gh-pages origin/gh-pages
+
+          # Root redirect
+          cat > /tmp/gh-pages/index.html << 'HTMLEOF'
           <!DOCTYPE html>
           <html>
           <head>
@@ -228,22 +235,16 @@ jobs:
             <p>Redirecting to <a href="mobile/">mobile report</a>...</p>
           </body>
           </html>
-          EOF
+          HTMLEOF
 
-      - name: Deploy Allure report to GitHub Pages
-        if: always() && github.ref == 'refs/heads/main'
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_branch: gh-pages
-          publish_dir: mobile/reports/allure-html
-          destination_dir: mobile
+          # Copy Allure report into mobile/
+          rm -rf /tmp/gh-pages/mobile
+          cp -r mobile/reports/allure-html /tmp/gh-pages/mobile
 
-      - name: Deploy root redirect to GitHub Pages
-        if: always() && github.ref == 'refs/heads/main'
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_branch: gh-pages
-          publish_dir: mobile/reports/gh-pages-root
-          keep_files: true
+          cd /tmp/gh-pages
+          git add -A
+          git diff --cached --quiet && echo "Nothing to deploy" || \
+            git commit -m "deploy: allure mobile report (${{ github.sha }})" && \
+            git push origin gh-pages
+
+          git worktree remove /tmp/gh-pages --force
