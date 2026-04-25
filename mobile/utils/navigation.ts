@@ -4,7 +4,7 @@ export async function ensureLoggedOut(): Promise<void> {
   await navigateToProductsScreen();
   await $(SEL.OPEN_MENU).click();
   await browser.pause(TIMEOUT.PAUSE_SM);
-  const logoutItem = await $(SEL.MENU_ITEM_LOG_OUT);
+  const logoutItem = $(SEL.MENU_ITEM_LOG_OUT);
   const isLoggedIn = await logoutItem.isDisplayed();
   if (isLoggedIn) {
     await logoutItem.click();

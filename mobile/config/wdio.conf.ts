@@ -21,7 +21,6 @@ export const config = {
       path.join(ROOT, 'mobile', 'features', 'mobile.checkout.feature'),
     ],
   ],
-  exclude: [],
 
   maxInstances: 1,
 
@@ -48,7 +47,6 @@ export const config = {
     await driver.activateApp(APP_PACKAGE);
     await browser.pause(TIMEOUT.PAUSE_LG);
   },
-
 
   bail: 0,
   retries: process.env.CI ? 1 : 0,

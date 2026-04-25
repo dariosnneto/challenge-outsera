@@ -46,6 +46,15 @@ export class ApiClient {
     return this.toApiResponse<T>(response);
   }
 
+  async putRaw(path: string, body: string, contentType: string): Promise<ApiResponse> {
+    const url = `${this.baseURL}${path}`;
+    const response = await this.request.put(url, {
+      headers: { 'Content-Type': contentType },
+      data: body,
+    });
+    return this.toApiResponse(response);
+  }
+
   async patch<T = unknown>(path: string, data?: unknown): Promise<ApiResponse<T>> {
     const url = `${this.baseURL}${path}`;
     const response = await this.request.patch(url, { data });

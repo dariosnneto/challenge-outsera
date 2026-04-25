@@ -1,5 +1,7 @@
+import { TIMEOUT } from '../constants';
+
 export abstract class BaseScreen {
-  async waitForDisplayed(selector: string, timeout = 15000) {
+  async waitForDisplayed(selector: string, timeout: number = TIMEOUT.LONG) {
     const element = $(selector);
     await element.waitForDisplayed({ timeout });
     return element;

@@ -4,6 +4,7 @@ reports/
 docs/
 test-results/
 playwright-report/
+screen.xml
 .env
 .env.*
 *.local

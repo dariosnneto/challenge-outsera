@@ -90,11 +90,8 @@ Given(
 Given(
   'que faço um PUT em {string} com corpo texto {string}',
   async ({ request }, path: string, body: string) => {
-    const raw = await request.put(`${BASE_URL}${path}`, {
-      headers: { 'Content-Type': 'text/plain' },
-      data: body,
-    });
-    const res: ApiResponse = { status: raw.status(), headers: raw.headers(), body: undefined, raw };
+    const client = makeClient(request);
+    const res = await client.putRaw(path, body, 'text/plain');
     const s = getState(request);
     s.response = res;
     s.responses = [res];

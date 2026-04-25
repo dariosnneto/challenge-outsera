@@ -45,8 +45,7 @@ When(
 When('continuo para o resumo do pedido', async ({ page }) => {
   const checkout = new CheckoutPage(page);
   await checkout.continue();
-  // Only assert navigation when the step is expected to succeed (CT006, CT007)
-  // For CT008-CT010 (missing fields), the error is asserted by the next Then step
+  // navigation assertion omitted intentionally — error scenarios assert in the following Then step
 });
 
 When('finalizo o pedido', async ({ page }) => {
