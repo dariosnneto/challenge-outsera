@@ -1,8 +1,14 @@
 import { defineConfig, devices } from '@playwright/test';
 import { defineBddProject } from 'playwright-bdd';
 import * as dotenv from 'dotenv';
+import * as path from 'path';
 
-dotenv.config();
+// Carrega o arquivo de ambiente correspondente a ENV (padrão: dev).
+// Uso: ENV=staging npm run test:e2e
+const env = process.env.ENV ?? 'dev';
+dotenv.config({ path: path.resolve(__dirname, `config/environments/${env}.env`) });
+// Fallback para .env local (sobrescreve variáveis não definidas no arquivo de ambiente)
+dotenv.config({ override: false });
 
 const e2eProject = defineBddProject({
   name: 'e2e',
