@@ -26,11 +26,12 @@ Funcionalidade: Login
       | locked_out_user | secret_sauce | Sorry, this user has been locked out |
 
   @CT-E004-LOGIN-COM-USUARIO-EM-BRANCO
-  Cenário: Login com usuário em branco exibe erro de campo obrigatório
-    Quando faço login com usuário "" e senha "secret_sauce"
-    Então devo ver uma mensagem de erro contendo "Username is required"
-
   @CT-E005-LOGIN-COM-SENHA-EM-BRANCO
-  Cenário: Login com senha em branco exibe erro de campo obrigatório
-    Quando faço login com usuário "standard_user" e senha ""
-    Então devo ver uma mensagem de erro contendo "Password is required"
+  Esquema do Cenário: Login com campo obrigatório em branco exibe erro
+    Quando faço login com usuário "<usuario>" e senha "<senha>"
+    Então devo ver uma mensagem de erro contendo "<erro>"
+
+    Exemplos:
+      | usuario       | senha        | erro                  | descricao          |
+      |               | secret_sauce | Username is required  | usuário em branco  |
+      | standard_user |              | Password is required  | senha em branco    |
