@@ -8,6 +8,12 @@ on:
   schedule:
     # Load test completo toda segunda-feira às 03:00 UTC
     - cron: '0 3 * * 1'
+  workflow_dispatch:
+    inputs:
+      job:
+        description: 'Job a executar (api | e2e | k6 | mobile | all)'
+        required: false
+        default: 'all'
 
 permissions:
   contents: write
@@ -19,6 +25,7 @@ jobs:
   api-tests:
     name: API Tests
     runs-on: ubuntu-latest
+    if: github.event_name != 'workflow_dispatch' || inputs.job == 'all' || inputs.job == 'api'
 
     steps:
       - name: Checkout repository
@@ -72,6 +79,7 @@ jobs:
   k6-tests:
     name: K6 Load Tests
     runs-on: ubuntu-latest
+    if: github.event_name != 'workflow_dispatch' || inputs.job == 'all' || inputs.job == 'k6'
 
     steps:
       - name: Checkout repository
@@ -143,6 +151,7 @@ jobs:
   e2e-tests:
     name: E2E Tests
     runs-on: ubuntu-latest
+    if: github.event_name != 'workflow_dispatch' || inputs.job == 'all' || inputs.job == 'e2e'
 
     steps:
       - name: Checkout repository
@@ -185,6 +194,7 @@ jobs:
   mobile-tests:
     name: Mobile Tests (Android)
     runs-on: self-hosted
+    if: github.event_name != 'workflow_dispatch' || inputs.job == 'all' || inputs.job == 'mobile'
 
     steps:
       - name: Checkout repository
