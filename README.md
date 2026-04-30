@@ -45,29 +45,40 @@ Framework de automação de testes cobrindo **API REST** (reqres.in), **E2E web*
 
 ```text
 challenge-outsera/
+├── config/
+│   └── environments/
+│       ├── dev.env              # Variáveis para ambiente de desenvolvimento
+│       ├── staging.env          # Variáveis para ambiente de homologação
+│       └── prod.env             # Variáveis para ambiente de produção
+│
 ├── api/
 │   ├── features/
-│   │   ├── users.get.feature        # CT-A001–CT-A005  (5 cenários)
-│   │   ├── users.post.feature       # CT-A006–CT-A012  (7 cenários)
+│   │   ├── users.get.feature        # CT-A001–CT-A004  (4 cenários)
+│   │   ├── users.post.feature       # CT-A006–CT-A012  (6 cenários)
 │   │   ├── users.put.feature        # CT-A013–CT-A016  (4 cenários)
 │   │   └── users.delete.feature     # CT-A017–CT-A018  (2 cenários)
 │   ├── helpers/
 │   │   ├── api.client.ts            # Wrapper tipado HTTP: get, post, put, putRaw, patch, delete
 │   │   └── constants.ts             # BASE_URL com fallback para reqres.in
 │   └── steps/
-│       └── users.api.steps.ts       # Step definitions Given/Then — todos os CT-Axxx
+│       ├── common.steps.ts          # Then genéricos: status, headers, campos, ISO date (compartilhados)
+│       ├── users.get.steps.ts       # Given/Then específicos — CT-A001–CT-A004
+│       ├── users.post.steps.ts      # Given específicos — CT-A006–CT-A012
+│       ├── users.put.steps.ts       # Given específicos — CT-A013–CT-A016
+│       └── users.delete.steps.ts    # Given específicos — CT-A017–CT-A018
 │
 ├── e2e/
 │   ├── features/
 │   │   ├── web.login.feature        # CT-E001–CT-E005  (5 cenários)
 │   │   └── web.checkout.feature     # CT-E006–CT-E011  (6 cenários)
 │   ├── pages/
-│   │   ├── BasePage.ts              # Locator de erro compartilhado (abstract)
+│   │   ├── BasePage.ts              # waitForPageLoad, waitForUrl, takeScreenshot, getPageTitle (abstract)
 │   │   ├── LoginPage.ts             # navigate(), login(), getErrorMessage()
 │   │   ├── DashboardPage.ts         # getTitle(), addProductToCart(), goToCart()
 │   │   ├── CartPage.ts              # getCartItems(), proceedToCheckout(), removeItem()
 │   │   └── CheckoutPage.ts          # fillForm(), continue(), finish(), getConfirmationMessage()
 │   ├── steps/
+│   │   ├── common.steps.ts          # Given compartilhado: autenticação (reusável por qualquer feature)
 │   │   ├── web.login.steps.ts       # Step definitions CT-E001–CT-E005
 │   │   └── web.checkout.steps.ts    # Step definitions CT-E006–CT-E011
 │   └── bdd.setup.ts                 # Global setup — executa bddgen antes dos testes
@@ -109,7 +120,7 @@ challenge-outsera/
 │   └── workflows/
 │       └── ci.yml                   # Pipeline: 4 jobs — api, e2e, k6 (ubuntu) + mobile (self-hosted)
 ├── docker-compose.yml               # Serviço WireMock na porta 8080
-├── playwright.config.ts             # 2 projetos BDD: api | e2e
+├── playwright.config.ts             # 2 projetos BDD: api | e2e — carrega config/environments/${ENV}.env
 ├── tsconfig.json
 └── package.json
 ```
@@ -154,30 +165,49 @@ choco install k6
 
 ## Variáveis de Ambiente 🔑
 
-Crie o arquivo `.env` na raiz do projeto:
+O projeto suporta **múltiplos ambientes** via arquivos em `config/environments/`. O `playwright.config.ts` carrega automaticamente o arquivo correspondente à variável `ENV` (padrão: `dev`).
 
-```env
-# Chave de API do reqres.in — obtenha em https://app.reqres.in/api-keys
-REQRES_API_KEY=sua_chave_aqui
+### Arquivos de ambiente
 
-# Opcional — URL base da API (padrão: https://reqres.in)
-BASE_URL_API=https://reqres.in
-
-# Opcional — URL base do E2E (padrão: https://www.saucedemo.com)
-BASE_URL_E2E=https://www.saucedemo.com
-
-# Opcional — credenciais SauceDemo (padrão: standard_user / secret_sauce)
-SAUCE_USERNAME=standard_user
-SAUCE_PASSWORD=secret_sauce
+```text
+config/environments/
+├── dev.env       # Desenvolvimento local
+├── staging.env   # Homologação
+└── prod.env      # Produção
 ```
 
-> O arquivo `.env` está no `.gitignore` — nunca commite credenciais reais.
+Cada arquivo segue a mesma estrutura:
+
+```env
+# URL base dos projetos
+BASE_URL_E2E=https://www.saucedemo.com
+BASE_URL_API=https://reqres.in
+
+# Credenciais SauceDemo
+SAUCE_USERNAME=standard_user
+SAUCE_PASSWORD=secret_sauce
+
+# Chave de API reqres.in — obtenha em https://app.reqres.in/api-keys
+# REQRES_API_KEY=sua_chave_aqui
+```
+
+Para substituir localmente sem commitar, crie um `.env` na raiz — ele é carregado como fallback após o arquivo de ambiente:
+
+```env
+# .env — sobreposição local (não commitado)
+REQRES_API_KEY=sua_chave_aqui
+SAUCE_USERNAME=performance_glitch_user
+```
+
+> Os arquivos `.env` e `.env.*` estão no `.gitignore` — nunca commite credenciais reais. Os arquivos em `config/environments/` contêm apenas valores de referência (sem segredos).
 
 ---
 
 ## Testes de API 🔌
 
 18 cenários BDD cobrindo GET, POST, PUT, PATCH e DELETE na API reqres.in.
+
+Os steps são organizados em **um arquivo por feature** + um `common.steps.ts` com os `Then` genéricos reutilizados por todos os cenários (validação de status, headers, campos e datas ISO).
 
 ```bash
 # Executar todos os testes de API
@@ -196,11 +226,30 @@ npx playwright test --project=api --grep "@CT-A006|@CT-A007"
 
 11 cenários BDD cobrindo login e fluxo de checkout no saucedemo.com.
 
+Os steps seguem a mesma estrutura do módulo API: **um arquivo por feature** + `common.steps.ts` com o step de autenticação compartilhado (`que estou logado como`), reutilizável por qualquer feature futura que exija usuário autenticado.
+
+### Selecionando o ambiente
+
 ```bash
-# Executar todos os testes E2E
+# Ambiente padrão (dev)
 npm run test:e2e
 
-# Executar um cenário específico por tag
+# Ambiente de desenvolvimento explícito
+npm run test:e2e:dev
+
+# Homologação
+npm run test:e2e:staging
+
+# Produção
+npm run test:e2e:prod
+
+# Ou diretamente com ENV
+ENV=staging npx playwright test --project=e2e
+```
+
+### Executar por tag
+
+```bash
 npx playwright test --project=e2e --grep "@CT-E006-CHECKOUT-COMPLETO-COM-UM-PRODUTO"
 ```
 
@@ -386,9 +435,9 @@ O pipeline executa **4 jobs** a cada push ou PR para `main` e `develop`. Os jobs
 
 ```text
 push / pull_request
-  ├── api-tests      (ubuntu-latest — Playwright API BDD, 19 cenários)
+  ├── api-tests      (ubuntu-latest — Playwright API BDD, 18 cenários)
   ├── k6-tests       (ubuntu-latest — K6 smoke, 3 VUs, 30s, WireMock)
-  ├── e2e-tests      (ubuntu-latest — Playwright E2E BDD, 11 cenários)
+  ├── e2e-tests      (ubuntu-latest — Playwright E2E BDD, 13 cenários)
   └── mobile-tests   (self-hosted   — Appium Android BDD, 5 cenários)
 
 schedule (toda segunda-feira às 03:00 UTC)
@@ -415,8 +464,8 @@ O GitHub Actions `ubuntu-latest` não disponibiliza KVM (virtualização de hard
 | `REQRES_API_KEY` | Secret | Chave da API reqres.in |
 | `BASE_URL_API` | Variable | URL base da API (opcional, padrão: `https://reqres.in`) |
 | `BASE_URL_E2E` | Variable | URL base E2E (opcional, padrão: `https://www.saucedemo.com`) |
-| `SAUCE_USERNAME` | Secret | Usuário SauceDemo (opcional, padrão: `standard_user`) |
-| `SAUCE_PASSWORD` | Secret | Senha SauceDemo (opcional, padrão: `secret_sauce`) |
+| `SAUCE_USERNAME` | Secret | Usuário SauceDemo |
+| `SAUCE_PASSWORD` | Secret | Senha SauceDemo |
 
 Artifacts ficam disponíveis por **30 dias** na aba **Actions**:
 
@@ -431,7 +480,10 @@ Artifacts ficam disponíveis por **30 dias** na aba **Actions**:
 
 ```bash
 npm run test:api              # Testes de API (Playwright BDD)
-npm run test:e2e              # Testes E2E (Playwright BDD)
+npm run test:e2e              # Testes E2E — ambiente dev (padrão)
+npm run test:e2e:dev          # Testes E2E — ambiente dev explícito
+npm run test:e2e:staging      # Testes E2E — ambiente de homologação
+npm run test:e2e:prod         # Testes E2E — ambiente de produção
 npm run test:all              # API + E2E em sequência
 npm run test:mobile           # Testes Mobile (WebdriverIO + Appium)
 npm run report                # Abre relatório Playwright no browser
