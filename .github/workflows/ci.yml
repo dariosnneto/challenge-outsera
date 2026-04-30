@@ -203,15 +203,20 @@ jobs:
         run: npx tsc --project mobile/tsconfig.json --noEmit
 
       - name: Start Appium server
-        run: npx appium &
+        run: Start-Job -ScriptBlock { npx appium } | Out-Null
 
       - name: Wait for Appium to be ready
         run: |
-          for i in $(seq 1 15); do
-            curl -s http://127.0.0.1:4723/status && break
-            echo "Waiting for Appium... ($i)"
-            sleep 2
-          done
+          $ready = $false
+          for ($i = 1; $i -le 15; $i++) {
+            try {
+              $r = Invoke-WebRequest -Uri "http://127.0.0.1:4723/status" -UseBasicParsing -TimeoutSec 2 -ErrorAction Stop
+              if ($r.StatusCode -eq 200) { $ready = $true; break }
+            } catch {}
+            Write-Host "Waiting for Appium... ($i)"
+            Start-Sleep -Seconds 2
+          }
+          if (-not $ready) { Write-Host "WARNING: Appium may not be ready" }
 
       - name: Run Mobile tests
         run: npm run test:mobile
@@ -235,17 +240,22 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          DEPLOY_DIR="../gh-pages-deploy"
-          rm -rf "$DEPLOY_DIR"
-          git clone --branch gh-pages --single-branch "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" "$DEPLOY_DIR"
+          $deployDir = "..\gh-pages-deploy"
+          if (Test-Path $deployDir) { Remove-Item -Recurse -Force $deployDir }
+          git clone --branch gh-pages --single-branch "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" $deployDir
 
-          printf '<!DOCTYPE html>\n<html>\n<head>\n  <meta charset="utf-8">\n  <meta http-equiv="refresh" content="0; url=mobile/">\n  <title>QA Report</title>\n</head>\n<body>\n  <p>Redirecting to <a href="mobile/">mobile report</a>...</p>\n</body>\n</html>\n' > "$DEPLOY_DIR/index.html"
+          $html = "<!DOCTYPE html>`n<html>`n<head>`n  <meta charset=`"utf-8`">`n  <meta http-equiv=`"refresh`" content=`"0; url=mobile/`">`n  <title>QA Report</title>`n</head>`n<body>`n  <p>Redirecting to <a href=`"mobile/`">mobile report</a>...</p>`n</body>`n</html>"
+          Set-Content -Path "$deployDir\index.html" -Value $html -Encoding utf8
 
-          rm -rf "$DEPLOY_DIR/mobile"
-          cp -r mobile/reports/allure-html "$DEPLOY_DIR/mobile"
+          if (Test-Path "$deployDir\mobile") { Remove-Item -Recurse -Force "$deployDir\mobile" }
+          Copy-Item -Recurse "mobile\reports\allure-html" "$deployDir\mobile"
 
-          cd "$DEPLOY_DIR"
+          Set-Location $deployDir
           git add -A
-          git diff --cached --quiet && echo "Nothing to deploy" || \
-            git commit -m "deploy: allure mobile report (${{ github.sha }})" && \
+          git diff --cached --quiet
+          if ($LASTEXITCODE -ne 0) {
+            git commit -m "deploy: allure mobile report (${{ github.sha }})"
             git push origin gh-pages
+          } else {
+            Write-Host "Nothing to deploy"
+          }
