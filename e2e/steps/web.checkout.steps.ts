@@ -1,21 +1,10 @@
 import { createBdd } from 'playwright-bdd';
 import { expect } from '@playwright/test';
-import { LoginPage } from '../pages/LoginPage';
 import { DashboardPage } from '../pages/DashboardPage';
 import { CartPage } from '../pages/CartPage';
 import { CheckoutPage } from '../pages/CheckoutPage';
 
-const { Given, When, Then } = createBdd();
-
-const SAUCE_USERNAME = process.env.SAUCE_USERNAME || 'standard_user';
-const SAUCE_PASSWORD = process.env.SAUCE_PASSWORD || 'secret_sauce';
-
-Given('que estou logado como {string}', async ({ page }, _role: string) => {
-  const loginPage = new LoginPage(page);
-  await loginPage.navigate();
-  await loginPage.login(SAUCE_USERNAME, SAUCE_PASSWORD);
-  await expect(page).toHaveURL(/inventory\.html/);
-});
+const { When, Then } = createBdd();
 
 When('adiciono {string} ao carrinho', async ({ page }, productName: string) => {
   const dashboard = new DashboardPage(page);

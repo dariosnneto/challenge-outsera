@@ -26,31 +26,21 @@ Funcionalidade: Checkout
     Então devo ver a mensagem de confirmação "Thank you for your order!"
 
   @CT-E008-CHECKOUT-SEM-NOME
-  Cenário: Checkout sem nome exibe erro
-    Quando adiciono "Sauce Labs Backpack" ao carrinho
-    E vou ao carrinho
-    E prossigo para o checkout
-    E preencho o formulário com nome "", sobrenome "Doe", CEP "12345"
-    E continuo para o resumo do pedido
-    Então devo ver um erro de checkout contendo "First Name is required"
-
   @CT-E009-CHECKOUT-SEM-SOBRENOME
-  Cenário: Checkout sem sobrenome exibe erro
-    Quando adiciono "Sauce Labs Backpack" ao carrinho
-    E vou ao carrinho
-    E prossigo para o checkout
-    E preencho o formulário com nome "John", sobrenome "", CEP "12345"
-    E continuo para o resumo do pedido
-    Então devo ver um erro de checkout contendo "Last Name is required"
-
   @CT-E010-CHECKOUT-SEM-CEP
-  Cenário: Checkout sem CEP exibe erro
+  Esquema do Cenário: Checkout com campo obrigatório em branco exibe erro
     Quando adiciono "Sauce Labs Backpack" ao carrinho
     E vou ao carrinho
     E prossigo para o checkout
-    E preencho o formulário com nome "John", sobrenome "Doe", CEP ""
+    E preencho o formulário com nome "<nome>", sobrenome "<sobrenome>", CEP "<cep>"
     E continuo para o resumo do pedido
-    Então devo ver um erro de checkout contendo "Postal Code is required"
+    Então devo ver um erro de checkout contendo "<erro>"
+
+    Exemplos:
+      | nome  | sobrenome | cep   | erro                    | descricao     |
+      |       | Doe       | 12345 | First Name is required  | sem nome      |
+      | John  |           | 12345 | Last Name is required   | sem sobrenome |
+      | John  | Doe       |       | Postal Code is required | sem CEP       |
 
   @CT-E011-REMOVER-PRODUTO-DO-CARRINHO
   Cenário: Remover produto do carrinho antes do checkout deixa o carrinho vazio

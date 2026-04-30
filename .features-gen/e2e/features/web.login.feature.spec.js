@@ -36,14 +36,18 @@ test.describe("Login", () => {
 
   });
 
-  test("Login com usuário em branco exibe erro de campo obrigatório", { tag: ["@CT-E004-LOGIN-COM-USUARIO-EM-BRANCO"] }, async ({ When, page, Then }) => {
-    await When("faço login com usuário \"\" e senha \"secret_sauce\"", null, { page });
-    await Then("devo ver uma mensagem de erro contendo \"Username is required\"", null, { page });
-  });
+  test.describe("Login com campo obrigatório em branco exibe erro", () => {
 
-  test("Login com senha em branco exibe erro de campo obrigatório", { tag: ["@CT-E005-LOGIN-COM-SENHA-EM-BRANCO"] }, async ({ When, page, Then }) => {
-    await When("faço login com usuário \"standard_user\" e senha \"\"", null, { page });
-    await Then("devo ver uma mensagem de erro contendo \"Password is required\"", null, { page });
+    test("Example #1", { tag: ["@CT-E004-LOGIN-COM-USUARIO-EM-BRANCO", "@CT-E005-LOGIN-COM-SENHA-EM-BRANCO"] }, async ({ When, page, Then }) => {
+      await When("faço login com usuário \"\" e senha \"secret_sauce\"", null, { page });
+      await Then("devo ver uma mensagem de erro contendo \"Username is required\"", null, { page });
+    });
+
+    test("Example #2", { tag: ["@CT-E004-LOGIN-COM-USUARIO-EM-BRANCO", "@CT-E005-LOGIN-COM-SENHA-EM-BRANCO"] }, async ({ When, page, Then }) => {
+      await When("faço login com usuário \"standard_user\" e senha \"\"", null, { page });
+      await Then("devo ver uma mensagem de erro contendo \"Password is required\"", null, { page });
+    });
+
   });
 
 });
@@ -63,6 +67,6 @@ const bddFileMeta = {
   "Login com credenciais inválidas exibe mensagem de erro|Example #1": {"pickleLocation":"24:7","tags":["@CT-E003-LOGIN-COM-CREDENCIAIS-INVALIDAS"]},
   "Login com credenciais inválidas exibe mensagem de erro|Example #2": {"pickleLocation":"25:7","tags":["@CT-E003-LOGIN-COM-CREDENCIAIS-INVALIDAS"]},
   "Login com credenciais inválidas exibe mensagem de erro|Example #3": {"pickleLocation":"26:7","tags":["@CT-E003-LOGIN-COM-CREDENCIAIS-INVALIDAS"]},
-  "Login com usuário em branco exibe erro de campo obrigatório": {"pickleLocation":"29:3","tags":["@CT-E004-LOGIN-COM-USUARIO-EM-BRANCO"],"ownTags":["@CT-E004-LOGIN-COM-USUARIO-EM-BRANCO"]},
-  "Login com senha em branco exibe erro de campo obrigatório": {"pickleLocation":"34:3","tags":["@CT-E005-LOGIN-COM-SENHA-EM-BRANCO"],"ownTags":["@CT-E005-LOGIN-COM-SENHA-EM-BRANCO"]},
+  "Login com campo obrigatório em branco exibe erro|Example #1": {"pickleLocation":"36:7","tags":["@CT-E004-LOGIN-COM-USUARIO-EM-BRANCO","@CT-E005-LOGIN-COM-SENHA-EM-BRANCO"]},
+  "Login com campo obrigatório em branco exibe erro|Example #2": {"pickleLocation":"37:7","tags":["@CT-E004-LOGIN-COM-USUARIO-EM-BRANCO","@CT-E005-LOGIN-COM-SENHA-EM-BRANCO"]},
 };
