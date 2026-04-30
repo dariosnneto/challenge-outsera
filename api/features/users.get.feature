@@ -23,14 +23,13 @@ Funcionalidade: GET /api/users — Consulta de usuários
     E que faço um GET em "/api/users" com parâmetro "page" igual a "2"
     Então as páginas não devem compartilhar IDs de usuários
 
-  @CT-A004-BUSCAR-USUARIO-INEXISTENTE
-  Cenário: Buscar um usuário inexistente
-    Dado que faço um GET em "/api/users/999"
+  @CT-A004-BUSCAR-RECURSO-INEXISTENTE
+  Esquema do Cenário: Buscar recurso inexistente retorna 404
+    Dado que faço um GET em "<endpoint>"
     Então o status da resposta deve ser 404
     E o corpo da resposta deve ser um objeto vazio
 
-  @CT-A005-BUSCAR-RECURSO-DESCONHECIDO
-  Cenário: Buscar um recurso desconhecido
-    Dado que faço um GET em "/api/unknown/999"
-    Então o status da resposta deve ser 404
-    E o corpo da resposta deve ser um objeto vazio
+    Exemplos:
+      | endpoint         | descricao                  |
+      | /api/users/999   | usuário com ID inexistente |
+      | /api/unknown/999 | recurso desconhecido       |
