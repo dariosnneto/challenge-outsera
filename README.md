@@ -445,7 +445,37 @@ schedule (toda segunda-feira às 03:00 UTC)
   ├── k6-tests       (load → spike → stress → soak em sequência, WireMock)
   ├── e2e-tests      (igual)
   └── mobile-tests   (igual)
+
+workflow_dispatch (execução manual seletiva)
+  └── qualquer job individualmente via input "job"
 ```
+
+### Execução manual seletiva
+
+O pipeline suporta disparo manual com seleção de job específico — útil para reexecutar apenas o job que falhou sem aguardar os demais.
+
+**Via GitHub:** Actions → QA Automation CI → Run workflow → selecionar o job
+
+**Via CLI:**
+
+```bash
+# Apenas testes mobile
+gh workflow run ci.yml --ref main -f job=mobile
+
+# Apenas testes de API
+gh workflow run ci.yml --ref main -f job=api
+
+# Apenas testes E2E
+gh workflow run ci.yml --ref main -f job=e2e
+
+# Apenas K6
+gh workflow run ci.yml --ref main -f job=k6
+
+# Todos os jobs (padrão)
+gh workflow run ci.yml --ref main -f job=all
+```
+
+> Em push, PR e schedule **todos os jobs continuam rodando normalmente** — o `workflow_dispatch` só ativa quando disparado manualmente.
 
 ### Por que mobile usa self-hosted runner?
 
