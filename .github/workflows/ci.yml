@@ -213,7 +213,14 @@ jobs:
         run: npx tsc --project mobile/tsconfig.json --noEmit
 
       - name: Start Appium server
-        run: Start-Job -ScriptBlock { npx appium } | Out-Null
+        run: |
+          $env:ANDROID_HOME = "C:\Users\User\AppData\Local\Android\Sdk"
+          $env:ANDROID_SDK_ROOT = "C:\Users\User\AppData\Local\Android\Sdk"
+          Start-Job -ScriptBlock {
+            $env:ANDROID_HOME = "C:\Users\User\AppData\Local\Android\Sdk"
+            $env:ANDROID_SDK_ROOT = "C:\Users\User\AppData\Local\Android\Sdk"
+            npx appium
+          } | Out-Null
 
       - name: Wait for Appium to be ready
         run: |
@@ -229,6 +236,9 @@ jobs:
           if (-not $ready) { Write-Host "WARNING: Appium may not be ready" }
 
       - name: Run Mobile tests
+        env:
+          ANDROID_HOME: C:\Users\User\AppData\Local\Android\Sdk
+          ANDROID_SDK_ROOT: C:\Users\User\AppData\Local\Android\Sdk
         run: npm run test:mobile
 
       - name: Generate Allure report
